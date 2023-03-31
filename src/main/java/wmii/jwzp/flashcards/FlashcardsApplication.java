@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class FlashcardsApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(FlashcardsApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(FlashcardsApplication.class, args);
+  }
 }
