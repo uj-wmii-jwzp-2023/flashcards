@@ -19,4 +19,14 @@ public class PasswordHash {
       throw new RuntimeException(e);
     }
   }
+
+  public static Boolean compare(String providedPassword, String hashedString) {
+    try {
+      MessageDigest md = MessageDigest.getInstance("SHA-512");
+      byte[] hashedPassword = md.digest(providedPassword.getBytes(StandardCharsets.UTF_8));
+      return new String(hashedPassword).equals(hashedString);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
 }
