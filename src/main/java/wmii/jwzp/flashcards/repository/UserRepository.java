@@ -12,7 +12,9 @@ import jakarta.transaction.Transactional;
 import wmii.jwzp.flashcards.model.db.UserModel;
 
 public interface UserRepository extends JpaRepository<UserModel, String> {
-  Boolean existsByNick(String nick);
+  boolean existsByNick(String nick);
+
+  UserModel findByNick(String nick);
 
   @Modifying
   @Transactional

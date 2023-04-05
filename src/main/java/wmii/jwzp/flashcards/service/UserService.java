@@ -6,16 +6,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import wmii.jwzp.flashcards.model.db.SessionModel;
 import wmii.jwzp.flashcards.model.db.UserModel;
+import wmii.jwzp.flashcards.repository.SessionRepository;
 import wmii.jwzp.flashcards.repository.UserRepository;
 import wmii.jwzp.flashcards.utils.PasswordHash;
 import wmii.jwzp.flashcards.utils.errors.ResourceConflict;
+import wmii.jwzp.flashcards.utils.errors.Unauthorized;
 
 @Service
 public class UserService {
 
   @Autowired
   UserRepository userRepository;
+  @Autowired
+  SessionRepository sessionRepository;
 
   public UserModel createUser(String nick, String password) {
 
@@ -40,4 +45,60 @@ public class UserService {
 
     return user;
   }
+
+  public void deleteUser(String id) {
+    UserModel user = userRepository.findById(id).orElse(null);
+
+    if (user == null) {
+      throw new Unauthorized("User not found");
+    }
+
+    userRepository.delete(user);
+  }
+
+  public SessionModel login(String nick, String password) {
+    UserModel user = userRepository.findByNick(nick);
+
+    if (user == null || !PasswordHash.compare(password, user.getHashedPassword())) {
+      throw new Unauthorized("Incorrect credentials");
+    }
+
+    String sessionId = UUID.randomUUID().toString();
+    SessionModel session = new SessionModel();
+    session.setId(sessionId);
+    session.setUserId(user.getId());
+    session.setCreatedAt();
+    session.setUpdatedAt();
+    session.setExpiresAt();
+
+    this.sessionRepository.save(session);
+
+    return session;
+  }
+
+  public void logout(String sessionId) {
+    SessionModel session = this.sessionRepository.findById(sessionId).orElse(null);
+
+    if (session == null) {
+      throw new Unauthorized("Session not found");
+    }
+
+    this.sessionRepository.delete(session);
+  }
+
+  public SessionModel refreshSession(String sessionId) {
+    SessionModel session = this.sessionRepository.findById(sessionId).orElse(null);
+
+    if (session == null) {
+      throw new Unauthorized("Session not found");
+    }
+
+    session.setUpdatedAt();
+    session.setExpiresAt();
+
+    this.sessionRepository.save(session);
+
+    return session;
+  }
+
 }
