@@ -14,7 +14,7 @@ public class PasswordHash {
       MessageDigest md = MessageDigest.getInstance("SHA-512");
       md.update(salt);
       byte[] hashedPassword = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
-      return new String(hashedPassword);
+      return new String(hashedPassword, StandardCharsets.UTF_8);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -24,7 +24,7 @@ public class PasswordHash {
     try {
       MessageDigest md = MessageDigest.getInstance("SHA-512");
       byte[] hashedPassword = md.digest(providedPassword.getBytes(StandardCharsets.UTF_8));
-      return new String(hashedPassword).equals(hashedString);
+      return new String(hashedPassword, StandardCharsets.UTF_8).equals(hashedString);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
