@@ -93,6 +93,11 @@ public class UserService {
       throw new Unauthorized("Session not found");
     }
 
+    if (session.isExpired()) {
+      this.sessionRepository.delete(session);
+      throw new Unauthorized("Session expired");
+    }
+
     session.setUpdatedAt();
     session.setExpiresAt();
 

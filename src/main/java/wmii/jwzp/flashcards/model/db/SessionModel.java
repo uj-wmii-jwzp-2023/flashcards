@@ -83,4 +83,8 @@ public class SessionModel {
     this.expiresAt = LocalDateTime.now().plusDays(days);
   }
 
+  public boolean isExpired() {
+    return LocalDateTime.now().isAfter(expiresAt);
+  }
+
 }

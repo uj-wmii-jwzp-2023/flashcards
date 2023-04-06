@@ -4,6 +4,11 @@ public class UserLoginInput {
   private String nick;
   private String password;
 
+  public UserLoginInput(String nick, String password) {
+    this.nick = nick;
+    this.password = password;
+  }
+
   public String getNick() {
     return nick;
   }
