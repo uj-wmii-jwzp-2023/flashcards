@@ -3,9 +3,9 @@ package wmii.jwzp.flashcards.model.internal;
 import java.io.Serializable;
 
 public class UserGroupLinkModelId implements Serializable {
-  String user_id;
+  public String user_id;
 
-  String group_id;
+  public String group_id;
 
   public UserGroupLinkModelId(String user_id, String group_id) {
     this.user_id = user_id;
@@ -14,6 +14,11 @@ public class UserGroupLinkModelId implements Serializable {
 
   // https://stackoverflow.com/questions/52648330/spring-data-jpa-manytomany-relationship-with-extra-column
   // TODO: do we need that?
+  @Override
+  public int hashCode() {
+    return (this.user_id + this.group_id).hashCode();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

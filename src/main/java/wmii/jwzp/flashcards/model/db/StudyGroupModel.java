@@ -1,12 +1,14 @@
 package wmii.jwzp.flashcards.model.db;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,6 +21,9 @@ public class StudyGroupModel {
 
   @Column(name = "created_at")
   private @CreatedDate LocalDateTime createdAt;
+
+  @OneToMany(mappedBy = "group")
+  private List<UserGroupLinkModel> users;
 
   public String getId() {
     return id;

@@ -34,11 +34,19 @@ public class StudyGroupController {
     return ResponseEntity.ok(groups);
   }
 
+  @GetMapping()
+  public ResponseEntity<List<StudyGroupModel>> getGroups(@CookieValue("sid") String authToken) {
+    var user = userService.getUserBySessionToken(authToken);
+    var groups = groupService.getGroupsByUser(user);
+    return ResponseEntity.ok(groups);
+  }
+
   @PostMapping()
   public ResponseEntity<StudyGroupResponse> createGroup(@RequestBody StudyGroupCreationInput groupInput,
       @CookieValue("sid") String authToken) {
     var user = userService.getUserBySessionToken(authToken);
-    var studyGroup = groupService.createGroup(groupInput, user);
+    var studyGroup = groupService.createGroup(groupInput);
+    groupService.joinGroup(studyGroup.getId(), user);
     var response = new StudyGroupResponse(studyGroup);
     return ResponseEntity.ok(response);
   }

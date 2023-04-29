@@ -27,7 +27,7 @@ public class StudyGroupService {
     return groupRepository.findAll();
   }
 
-  public StudyGroupModel createGroup(StudyGroupCreationInput input, UserModel user) {
+  public StudyGroupModel createGroup(StudyGroupCreationInput input) {
     var studyGroup = new StudyGroupModel();
     String id = UUID.randomUUID().toString();
     studyGroup.setId(id);
@@ -35,14 +35,16 @@ public class StudyGroupService {
     studyGroup.setName(input.getName());
     groupRepository.save(studyGroup);
 
+    return studyGroup;
+  }
+
+  public void joinGroup(String groupId, UserModel user) {
     var userGroupLink = new UserGroupLinkModel();
     userGroupLink.setUserId(user.getId());
-    userGroupLink.setGroupId(studyGroup.getId());
+    userGroupLink.setGroupId(groupId);
     userGroupLink.setCreatedAt();
-    userGroupLink.setAccessLevel(AccessLevels.ADMIN);
+    userGroupLink.setAccessLevel(AccessLevels.USER);
     userGroupLinkRepository.save(userGroupLink);
-
-    return studyGroup;
   }
 
 }
