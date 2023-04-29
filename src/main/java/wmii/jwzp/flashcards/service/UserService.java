@@ -106,4 +106,25 @@ public class UserService {
     return session;
   }
 
+  public UserModel getUserBySessionToken(String sessionId) {
+    SessionModel session = this.sessionRepository.findById(sessionId).orElse(null);
+
+    if (session == null) {
+      throw new Unauthorized("Session not found");
+    }
+
+    if (session.isExpired()) {
+      this.sessionRepository.delete(session);
+      throw new Unauthorized("Session expired");
+    }
+
+    UserModel user = this.userRepository.findById(session.getUserId()).orElse(null);
+
+    if (user == null) {
+      throw new Unauthorized("User not found");
+    }
+
+    return user;
+  }
+
 }
