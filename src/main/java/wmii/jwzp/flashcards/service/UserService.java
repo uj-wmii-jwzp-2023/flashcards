@@ -107,6 +107,11 @@ public class UserService {
   }
 
   public UserModel getUserBySessionToken(String sessionId) {
+
+    if ("".equals(sessionId)) {
+      throw new Unauthorized("Not logged in");
+    }
+
     SessionModel session = this.sessionRepository.findById(sessionId).orElse(null);
 
     if (session == null) {

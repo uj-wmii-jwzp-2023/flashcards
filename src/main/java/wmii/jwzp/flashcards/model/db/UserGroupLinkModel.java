@@ -8,16 +8,21 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import wmii.jwzp.flashcards.model.internal.UserGroupLinkModelId;
 
 @Entity
-@IdClass(UserGroupLinkModelId.class)
+// @IdClass(UserGroupLinkModelId.class)
 public class UserGroupLinkModel {
-  @EmbeddedId
-  UserGroupLinkModelId id;
+  // @EmbeddedId
+  // UserGroupLinkModelId id;
+
+  @Id
+  String id;
 
   @Column(name = "created_at")
   private @CreatedDate LocalDateTime createdAt;
@@ -26,11 +31,11 @@ public class UserGroupLinkModel {
   private int accessLevel;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @MapsId("user_id")
+  @JoinColumn(name = "user_id", nullable = false)
   private UserModel user;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @MapsId("group_id")
+  @JoinColumn(name = "group_id", nullable = false)
   private StudyGroupModel group;
 
   public String getUserId() {
@@ -39,11 +44,10 @@ public class UserGroupLinkModel {
 
   public void setUserId(String userId) {
     this.user.setId(userId);
-    ;
   }
 
   public String getGroupId() {
-    return this.getGroupId();
+    return this.group.getId();
   }
 
   public void setGroupId(String groupId) {

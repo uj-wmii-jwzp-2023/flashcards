@@ -13,6 +13,8 @@ import wmii.jwzp.flashcards.model.db.UserModel;
 import wmii.jwzp.flashcards.repository.StudyGroupRepository;
 import wmii.jwzp.flashcards.repository.UserGroupLinkRepository;
 import wmii.jwzp.flashcards.utils.AccessLevels;
+import wmii.jwzp.flashcards.utils.errors.BadRequest;
+import wmii.jwzp.flashcards.utils.errors.NotFound;
 
 @Service
 public class StudyGroupService {
@@ -27,6 +29,15 @@ public class StudyGroupService {
     return groupRepository.findAll();
   }
 
+  public StudyGroupModel getGroupById(String id) {
+    var studyGroup = this.groupRepository.findById(id);
+    if (studyGroup.isPresent()) {
+      return studyGroup.get();
+    } else {
+      throw new NotFound("Study group not found");
+    }
+  }
+
   public StudyGroupModel createGroup(StudyGroupCreationInput input) {
     var studyGroup = new StudyGroupModel();
     String id = UUID.randomUUID().toString();
@@ -38,13 +49,18 @@ public class StudyGroupService {
     return studyGroup;
   }
 
-  public void joinGroup(String groupId, UserModel user) {
+  public void joinGroup(String groupId, UserModel user, int accessLevel) {
     var userGroupLink = new UserGroupLinkModel();
     userGroupLink.setUserId(user.getId());
     userGroupLink.setGroupId(groupId);
     userGroupLink.setCreatedAt();
-    userGroupLink.setAccessLevel(AccessLevels.USER);
+    userGroupLink.setAccessLevel(accessLevel);
     userGroupLinkRepository.save(userGroupLink);
+  }
+
+  public List<StudyGroupModel> getGroupsByUser(UserModel user) {
+    var groups = this.groupRepository.findAllByUser(user.getId());
+    return groups;
   }
 
 }
