@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.ResponseEntity;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/hello")
 public class AppController {
-  @GetMapping(path = "/hello")
+  @GetMapping()
   public ResponseEntity<String> hello() {
     return ResponseEntity.status(200).body("Hello");
   }

@@ -2,18 +2,17 @@ package wmii.jwzp.flashcards.model.internal;
 
 import java.io.Serializable;
 
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Id;
+
+@Embeddable
 public class UserGroupLinkModelId implements Serializable {
+  @Id
   public String user_id;
 
+  @Id
   public String group_id;
 
-  public UserGroupLinkModelId(String user_id, String group_id) {
-    this.user_id = user_id;
-    this.group_id = group_id;
-  }
-
-  // https://stackoverflow.com/questions/52648330/spring-data-jpa-manytomany-relationship-with-extra-column
-  // TODO: do we need that?
   @Override
   public int hashCode() {
     return (this.user_id + this.group_id).hashCode();

@@ -13,16 +13,21 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
 import wmii.jwzp.flashcards.model.internal.UserGroupLinkModelId;
 
 @Entity
-// @IdClass(UserGroupLinkModelId.class)
+@IdClass(UserGroupLinkModelId.class)
+@Table(name = "users_groups")
 public class UserGroupLinkModel {
   // @EmbeddedId
-  // UserGroupLinkModelId id;
+  // UserGroupLinkModelId id = new UserGroupLinkModelId();
 
   @Id
-  String id;
+  public String user_id;
+
+  @Id
+  public String group_id;
 
   @Column(name = "created_at")
   private @CreatedDate LocalDateTime createdAt;
@@ -31,27 +36,27 @@ public class UserGroupLinkModel {
   private int accessLevel;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
+  @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
   private UserModel user;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "group_id", nullable = false)
+  @JoinColumn(name = "group_id", nullable = false, insertable = false, updatable = false)
   private StudyGroupModel group;
 
   public String getUserId() {
-    return this.user.getId();
+    return this.user_id;
   }
 
   public void setUserId(String userId) {
-    this.user.setId(userId);
+    this.user_id = userId;
   }
 
   public String getGroupId() {
-    return this.group.getId();
+    return this.group_id;
   }
 
   public void setGroupId(String groupId) {
-    this.group.setId(groupId);
+    this.group_id = groupId;
   }
 
   public LocalDateTime getCreatedAt() {

@@ -49,10 +49,10 @@ public class StudyGroupService {
     return studyGroup;
   }
 
-  public void joinGroup(String groupId, UserModel user, int accessLevel) {
+  public void joinGroup(StudyGroupModel group, UserModel user, int accessLevel) {
     var userGroupLink = new UserGroupLinkModel();
     userGroupLink.setUserId(user.getId());
-    userGroupLink.setGroupId(groupId);
+    userGroupLink.setGroupId(group.getId());
     userGroupLink.setCreatedAt();
     userGroupLink.setAccessLevel(accessLevel);
     userGroupLinkRepository.save(userGroupLink);
