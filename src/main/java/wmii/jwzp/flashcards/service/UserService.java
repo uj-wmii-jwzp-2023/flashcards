@@ -11,6 +11,7 @@ import wmii.jwzp.flashcards.model.db.UserModel;
 import wmii.jwzp.flashcards.repository.SessionRepository;
 import wmii.jwzp.flashcards.repository.UserRepository;
 import wmii.jwzp.flashcards.utils.PasswordHash;
+import wmii.jwzp.flashcards.utils.errors.NotFound;
 import wmii.jwzp.flashcards.utils.errors.ResourceConflict;
 import wmii.jwzp.flashcards.utils.errors.Unauthorized;
 
@@ -127,6 +128,16 @@ public class UserService {
 
     if (user == null) {
       throw new Unauthorized("User not found");
+    }
+
+    return user;
+  }
+
+  public UserModel getUserById(String userId) {
+    UserModel user = this.userRepository.findById(userId).orElse(null);
+
+    if (user == null) {
+      throw new NotFound("User not found");
     }
 
     return user;

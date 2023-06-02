@@ -3,8 +3,8 @@ package wmii.jwzp.flashcards.utils;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 
 public class Headers extends HttpHeaders {
 
@@ -21,9 +21,16 @@ public class Headers extends HttpHeaders {
     this.setAccessControlExposeHeaders(this.exposedHeaders);
   }
 
-  public Headers addCookie(HttpCookie cookie) {
-    this.add("Set-Cookie", cookie.toString());
+  public Headers addSid(String sid) {
+    var cookie = ResponseCookie
+        .from("sid", sid)
+        .secure(true)
+        .httpOnly(true)
+        .path("/")
+        .maxAge(3600 * 24)
+        .build();
+
+    this.add(HttpHeaders.SET_COOKIE, cookie.toString());
     return this;
   }
-
 }

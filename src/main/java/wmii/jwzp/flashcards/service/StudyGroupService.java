@@ -2,6 +2,7 @@ package wmii.jwzp.flashcards.service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,12 +13,16 @@ import wmii.jwzp.flashcards.model.db.UserGroupLinkModel;
 import wmii.jwzp.flashcards.model.db.UserModel;
 import wmii.jwzp.flashcards.repository.StudyGroupRepository;
 import wmii.jwzp.flashcards.repository.UserGroupLinkRepository;
+import wmii.jwzp.flashcards.repository.UserRepository;
 import wmii.jwzp.flashcards.utils.AccessLevels;
 import wmii.jwzp.flashcards.utils.errors.BadRequest;
 import wmii.jwzp.flashcards.utils.errors.NotFound;
 
 @Service
 public class StudyGroupService {
+
+  @Autowired
+  private UserRepository userRepository;
 
   @Autowired
   private StudyGroupRepository groupRepository;
@@ -61,6 +66,11 @@ public class StudyGroupService {
   public List<StudyGroupModel> getGroupsByUser(UserModel user) {
     var groups = this.groupRepository.findAllByUser(user.getId());
     return groups;
+  }
+
+  public List<UserModel> getUsersInGroup(StudyGroupModel group) {
+    var users = userRepository.findAllByGroup(group.getId());
+    return users;
   }
 
 }

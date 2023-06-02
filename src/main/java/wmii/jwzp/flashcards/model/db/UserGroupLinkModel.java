@@ -37,11 +37,11 @@ public class UserGroupLinkModel {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
-  private UserModel user;
+  public UserModel user;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "group_id", nullable = false, insertable = false, updatable = false)
-  private StudyGroupModel group;
+  public StudyGroupModel group;
 
   public String getUserId() {
     return this.user_id;

@@ -15,9 +15,26 @@ public class UserGroupLinkService {
   @Autowired()
   private UserGroupLinkRepository userGroupLinkRepository;
 
-  public UserGroupLinkModel verifyUserAction(UserModel user, StudyGroupModel group, int requiredAccess) {
+  public void verifyUserAction(UserModel user, StudyGroupModel group, int requiredAccess) {
+    System.out.println("--------------------------");
+    System.out.println("--------------------------");
+    System.out.println("--------------------------");
+    System.out.println("--------------------------");
+    System.out.println("--------------------------");
+    System.out.println("--------------------------");
+    System.out.println("USER ID: " + user.getId() + " GROUP ID: " + group.getId());
+    var link = userGroupLinkRepository.getById(user.getId(), group.getId());
+    System.out.println("link: " + link.toString());
 
-    throw new Unauthorized("Not authorized to perform action.");
+    if (link == null || link.getAccessLevel() < requiredAccess) {
+      throw new Unauthorized("User is not allowed to perform the action.");
+    }
   }
 
+  public UserGroupLinkModel updateAccessLevel(StudyGroupModel group, UserModel user, int access_level) {
+    var link = userGroupLinkRepository.getById(user.getId(), group.getId());
+    link.setAccessLevel(access_level);
+    userGroupLinkRepository.save(link);
+    return link;
+  }
 }

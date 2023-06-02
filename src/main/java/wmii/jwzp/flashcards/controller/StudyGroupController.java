@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import wmii.jwzp.flashcards.model.api.input.LinkUpdateInput;
 import wmii.jwzp.flashcards.model.api.input.StudyGroupCreationInput;
 import wmii.jwzp.flashcards.model.api.output.StudyGroupResponse;
+import wmii.jwzp.flashcards.model.api.output.UserGroupLinkResponse;
+import wmii.jwzp.flashcards.model.api.output.UserResponse;
 import wmii.jwzp.flashcards.model.db.StudyGroupModel;
 import wmii.jwzp.flashcards.service.StudyGroupService;
 import wmii.jwzp.flashcards.service.UserGroupLinkService;
@@ -70,14 +73,30 @@ public class StudyGroupController {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/{group_id}/users")
+  public ResponseEntity<List<UserResponse>> getUsersInGroup(@PathVariable("group_id") String groupId,
+      @CookieValue("sid") String authToken) {
+    var user = userService.getUserBySessionToken(authToken);
+    var group = groupService.getGroupById(groupId);
+    userGroupLinkService.verifyUserAction(user, group, 0);
+
+    var usersInGroup = groupService.getUsersInGroup(group);
+    var response = usersInGroup.stream().map(e -> new UserResponse(e)).collect(Collectors.toList());
+    return ResponseEntity.ok(response);
+  }
+
   @PatchMapping("/{group_id}/users/{user_id}")
-  public ResponseEntity<?> editUserRole(@PathVariable("group_id") String groupId,
-      @PathVariable("user_id") String userId, @CookieValue("sid") String authToken, @RequestBody() String body) {
+  public ResponseEntity<UserGroupLinkResponse> editUserRole(@PathVariable("group_id") String groupId,
+      @PathVariable("user_id") String userId, @CookieValue("sid") String authToken,
+      @RequestBody LinkUpdateInput linkInput) {
     var user = userService.getUserBySessionToken(authToken);
     var group = groupService.getGroupById("group_id");
     userGroupLinkService.verifyUserAction(user, group, 2);
 
-    return ResponseEntity.ok("Not implemented yet");
+    var updateUser = userService.getUserById(userId);
+    var link = userGroupLinkService.updateAccessLevel(group, updateUser, linkInput.getAccessLevel());
+    var response = new UserGroupLinkResponse(link);
+    return ResponseEntity.ok(response);
   }
 
 }

@@ -11,9 +11,9 @@ import wmii.jwzp.flashcards.utils.Headers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -38,7 +38,7 @@ public class UserController {
     var session = userService.login(userInput.getNick(), userInput.getPassword());
     var sessionResponse = new SessionResponse(session);
     return ResponseEntity.ok().headers(
-        new Headers().addCookie(new HttpCookie("sid", session.getId()))).body(sessionResponse);
+        new Headers().addSid(session.getId())).body(sessionResponse);
   }
 
   @PostMapping("/session")
@@ -46,13 +46,19 @@ public class UserController {
     var session = userService.refreshSession(authToken);
     var sessionResponse = new SessionResponse(session);
     return ResponseEntity.ok().headers(
-        new Headers().addCookie(new HttpCookie("sid", session.getId()))).body(sessionResponse);
+        new Headers().addSid(session.getId())).body(sessionResponse);
   }
 
   @PostMapping("/logout")
   public ResponseEntity<Void> logoutUser(@CookieValue("sid") String authToken) {
     userService.logout(authToken);
-    return ResponseEntity.ok().headers(new Headers().addCookie(new HttpCookie("sid", ""))).build();
+    return ResponseEntity.ok().headers(new Headers().addSid("")).build();
+  }
+
+  @GetMapping()
+  public ResponseEntity<UserResponse> getMe(@CookieValue("sid") String authToken) {
+    var user = userService.getUserBySessionToken(authToken);
+    return ResponseEntity.ok(new UserResponse(user));
   }
 
 }
