@@ -68,7 +68,7 @@ public class StudyGroupController {
       @CookieValue("sid") String authToken) {
     var user = userService.getUserBySessionToken(authToken);
     var group = groupService.getGroupById(groupId);
-    groupService.joinGroup(group, user, 0);
+    groupService.joinGroup(group, user, AccessLevels.GUEST);
     var response = new StudyGroupResponse(group);
     return ResponseEntity.ok(response);
   }
@@ -78,7 +78,7 @@ public class StudyGroupController {
       @CookieValue("sid") String authToken) {
     var user = userService.getUserBySessionToken(authToken);
     var group = groupService.getGroupById(groupId);
-    userGroupLinkService.verifyUserAction(user, group, 0);
+    userGroupLinkService.verifyUserAction(user, group, AccessLevels.GUEST);
 
     var usersInGroup = groupService.getUsersInGroup(group);
     var response = usersInGroup.stream().map(e -> new UserResponse(e)).collect(Collectors.toList());
@@ -91,7 +91,7 @@ public class StudyGroupController {
       @RequestBody LinkUpdateInput linkInput) {
     var user = userService.getUserBySessionToken(authToken);
     var group = groupService.getGroupById("group_id");
-    userGroupLinkService.verifyUserAction(user, group, 2);
+    userGroupLinkService.verifyUserAction(user, group, AccessLevels.ADMIN);
 
     var updateUser = userService.getUserById(userId);
     var link = userGroupLinkService.updateAccessLevel(group, updateUser, linkInput.getAccessLevel());
