@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

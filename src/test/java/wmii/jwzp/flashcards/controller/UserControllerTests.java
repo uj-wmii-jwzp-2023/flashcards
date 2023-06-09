@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.servlet.http.Cookie;
 
-import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyString;

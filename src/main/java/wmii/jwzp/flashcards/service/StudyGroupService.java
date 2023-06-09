@@ -2,7 +2,6 @@ package wmii.jwzp.flashcards.service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,8 +13,6 @@ import wmii.jwzp.flashcards.model.db.UserModel;
 import wmii.jwzp.flashcards.repository.StudyGroupRepository;
 import wmii.jwzp.flashcards.repository.UserGroupLinkRepository;
 import wmii.jwzp.flashcards.repository.UserRepository;
-import wmii.jwzp.flashcards.utils.AccessLevels;
-import wmii.jwzp.flashcards.utils.errors.BadRequest;
 import wmii.jwzp.flashcards.utils.errors.NotFound;
 
 @Service
