@@ -38,13 +38,6 @@ public class StudyGroupController {
   @Autowired()
   private UserGroupLinkService userGroupLinkService;
 
-  // TODO: this is here for debugging, remove it later
-  @GetMapping("/admin")
-  public ResponseEntity<List<StudyGroupModel>> getAllGroups(@CookieValue("sid") String authToken) {
-    var groups = groupService.getAllGroups();
-    return ResponseEntity.ok(groups);
-  }
-
   @GetMapping()
   public ResponseEntity<List<StudyGroupResponse>> getGroups(@CookieValue("sid") String authToken) {
     var user = userService.getUserBySessionToken(authToken);
