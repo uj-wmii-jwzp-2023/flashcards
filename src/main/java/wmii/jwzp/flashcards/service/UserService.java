@@ -2,6 +2,8 @@ package wmii.jwzp.flashcards.service;
 
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,6 +19,8 @@ import wmii.jwzp.flashcards.utils.errors.Unauthorized;
 
 @Service
 public class UserService {
+
+  Logger logger = LoggerFactory.getLogger(UserService.class);
 
   @Autowired
   UserRepository userRepository;

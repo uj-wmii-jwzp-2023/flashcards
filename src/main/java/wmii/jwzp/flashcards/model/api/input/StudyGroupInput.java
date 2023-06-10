@@ -1,6 +1,6 @@
 package wmii.jwzp.flashcards.model.api.input;
 
-public class StudyGroupCreationInput {
+public class StudyGroupInput {
   private String name;
 
   public String getName() {
