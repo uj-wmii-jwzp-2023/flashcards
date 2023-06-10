@@ -24,6 +24,7 @@ tasks.named('shadowJar'){
 	manifest {
         attributes 'Main-Class': 'wmii.jwzp.flashcards.FlashcardsApplication'
     }
+	archiveFileName = "flashcards.jar"
 }
 
 tasks.named('test') {
