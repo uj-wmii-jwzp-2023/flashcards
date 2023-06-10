@@ -1,0 +1,11 @@
+name: build artifact
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: test
+        run: ./gradlew test
