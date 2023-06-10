@@ -1,8 +1,5 @@
-name: build artifact
-on:
-  push:
-    branches:
-      - main
+name: build, and test
+on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
