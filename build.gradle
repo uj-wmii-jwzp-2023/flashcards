@@ -1,7 +1,6 @@
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.0.4'
-	id 'com.github.johnrengelman.shadow' version '7.0.0'
 	id 'io.spring.dependency-management' version '1.1.0'
 }
 
@@ -20,12 +19,11 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-tasks.named('shadowJar'){
-	manifest {
-        attributes 'Main-Class': 'wmii.jwzp.flashcards.FlashcardsApplication'
-    }
-	archiveFileName = "flashcards.jar"
+tasks.named("bootJar") {
+	mainClass = 'wmii.jwzp.flashcards.FlashcardsApplication'
+	archiveFileName = "flashcard_bootjar.jar"
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()
