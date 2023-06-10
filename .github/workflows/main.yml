@@ -21,4 +21,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: jarka
-          path: ./build/libs/flashchards_bootjar.jar
+          path: ./build/libs/flashcards_bootjar.jar
