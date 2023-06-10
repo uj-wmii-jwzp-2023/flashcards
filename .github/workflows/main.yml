@@ -14,9 +14,9 @@ jobs:
         with:
          java-version: 17
       - name: build
-        run: |
-          ./gradlew build
-          ./gradlew bootjar
+        run: ./gradlew build
+      - name: craft artifact 
+        run: ./gradlew bootjar
       - name: upload artifact 
         uses: actions/upload-artifact@v3
         with:
