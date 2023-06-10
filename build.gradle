@@ -21,7 +21,7 @@ dependencies {
 
 tasks.named("bootJar") {
 	mainClass = 'wmii.jwzp.flashcards.FlashcardsApplication'
-	archiveFileName = "flashcard_bootjar.jar"
+	archiveFileName = "flashcards_bootjar.jar"
 }
 
 

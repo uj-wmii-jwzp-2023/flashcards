@@ -15,9 +15,10 @@ jobs:
          java-version: 17
       - name: build
         run: |
+          ./gradlew build
           ./gradlew bootjar
-          ls
-      - uses: actions/upload-artifact@v3
+      - name: upload artifact 
+        uses: actions/upload-artifact@v3
         with:
           name: jarka
           path: ./build/libs/flashchards_bootjar.jar
