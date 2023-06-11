@@ -1,6 +1,11 @@
 FROM eclipse-temurin:17
-RUN ["mkdir","/opt/app"]
+
+# Copying the artifact
 COPY ["./build/libs/flashcards_bootjar.jar","/opt/app/app.jar"]
-COPY ["./.env","/.env"] #database settings
+
+# Database configuration 
+COPY ["./.env","/.env"] 
+
 EXPOSE 8080
+
 CMD ["java", "-jar", "/opt/app/app.jar"]
