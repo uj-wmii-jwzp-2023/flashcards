@@ -61,4 +61,9 @@ public class CardService {
     return cardModel;
   }
 
+  public CardModel removeCard(CardModel cardModel) {
+    cardRepository.delete(cardModel);
+    return cardModel;
+  }
+
 }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -91,7 +92,20 @@ public class FlashcardSetController {
 
     setService.verifyUserAction(user, flashcardSet, AccessLevels.ADMIN);
 
-    setService.updateSet(flashcardSet, input);
+    flashcardSet = setService.updateSet(flashcardSet, input);
+
+    var response = new FlashcardSetResponse(flashcardSet);
+    return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/{set_id}")
+  public ResponseEntity<FlashcardSetResponse> deleteSet(@CookieValue("sid") String authToken,
+      @PathVariable("set_id") String setId) {
+    var user = userService.getUserBySessionToken(authToken);
+    var flashcardSet = setService.getSet(setId);
+    setService.verifyUserAction(user, flashcardSet, AccessLevels.ADMIN);
+
+    flashcardSet = setService.removeSet(flashcardSet);
 
     var response = new FlashcardSetResponse(flashcardSet);
     return ResponseEntity.ok(response);
@@ -102,7 +116,6 @@ public class FlashcardSetController {
       @PathVariable("set_id") String setId) {
     var user = userService.getUserBySessionToken(authToken);
     var flashcardSet = setService.getSet(setId);
-
     setService.verifyUserAction(user, flashcardSet, AccessLevels.ADMIN);
 
     var cards = cardService.getCards(flashcardSet);
@@ -116,7 +129,6 @@ public class FlashcardSetController {
       @PathVariable("set_id") String setId, @RequestBody CardInput cardInput) {
     var user = userService.getUserBySessionToken(authToken);
     var flashcardSet = setService.getSet(setId);
-
     setService.verifyUserAction(user, flashcardSet, AccessLevels.ADMIN);
 
     var card = cardService.createCard(cardInput, flashcardSet);
@@ -130,11 +142,24 @@ public class FlashcardSetController {
       @PathVariable("card_id") String cardId, @RequestBody CardInput cardInput) {
     var user = userService.getUserBySessionToken(authToken);
     var flashcardSet = setService.getSet(cardId);
-
     setService.verifyUserAction(user, flashcardSet, AccessLevels.ADMIN);
 
     var card = cardService.getCardById(cardId);
     card = cardService.updateCard(card, cardInput);
+
+    var response = new CardResponse(card);
+    return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/{set_id}/cards/{card_id}")
+  public ResponseEntity<CardResponse> deleteCard(@CookieValue("sid") String authToken,
+      @PathVariable("card_id") String cardId) {
+    var user = userService.getUserBySessionToken(authToken);
+    var flashcardSet = setService.getSet(cardId);
+    setService.verifyUserAction(user, flashcardSet, AccessLevels.ADMIN);
+
+    var card = cardService.getCardById(cardId);
+    card = cardService.removeCard(card);
 
     var response = new CardResponse(card);
     return ResponseEntity.ok(response);

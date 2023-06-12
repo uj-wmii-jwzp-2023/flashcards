@@ -65,6 +65,7 @@ public class StudyGroupController {
   public ResponseEntity<List<StudyGroupResponse>> getGroups(@CookieValue("sid") String authToken) {
     var user = userService.getUserBySessionToken(authToken);
     var groups = groupService.getGroupsByUser(user);
+
     var response = groups.stream().map(e -> new StudyGroupResponse(e)).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
@@ -74,7 +75,9 @@ public class StudyGroupController {
       @CookieValue("sid") String authToken) {
     var user = userService.getUserBySessionToken(authToken);
     var studyGroup = groupService.createGroup(groupInput);
+
     userGroupLinkService.joinGroup(studyGroup, user, AccessLevels.ADMIN);
+
     var response = new StudyGroupResponse(studyGroup);
     return ResponseEntity.ok(response);
   }
@@ -117,12 +120,14 @@ public class StudyGroupController {
   }
 
   @PostMapping("/{group_id}/join")
-  public ResponseEntity<StudyGroupResponse> joinGroup(@PathVariable("group_id") String groupId,
+  public ResponseEntity<UserGroupLinkResponse> joinGroup(@PathVariable("group_id") String groupId,
       @CookieValue("sid") String authToken) {
     var user = userService.getUserBySessionToken(authToken);
     var group = groupService.getGroupById(groupId);
-    userGroupLinkService.joinGroup(group, user, AccessLevels.GUEST);
-    var response = new StudyGroupResponse(group);
+
+    var link = userGroupLinkService.joinGroup(group, user, AccessLevels.GUEST);
+
+    var response = new UserGroupLinkResponse(link);
     return ResponseEntity.ok(response);
   }
 
@@ -134,6 +139,7 @@ public class StudyGroupController {
     userGroupLinkService.verifyUserAction(user, group, AccessLevels.GUEST);
 
     var usersInGroup = groupService.getUsersInGroup(group);
+
     var response = usersInGroup.stream().map(e -> new UserResponse(e)).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
@@ -148,6 +154,7 @@ public class StudyGroupController {
 
     var updateUser = userService.getUserById(userId);
     var link = userGroupLinkService.updateAccessLevel(group, updateUser, linkInput.getAccessLevel());
+
     var response = new UserGroupLinkResponse(link);
     return ResponseEntity.ok(response);
   }
@@ -161,6 +168,7 @@ public class StudyGroupController {
     userGroupLinkService.verifyUserAction(user, group, AccessLevels.ADMIN);
 
     var link = userGroupLinkService.leaveGroup(group, user);
+
     var response = new UserGroupLinkResponse(link);
     return ResponseEntity.ok(response);
   }
@@ -173,6 +181,7 @@ public class StudyGroupController {
     userGroupLinkService.verifyUserAction(user, group, AccessLevels.GUEST);
 
     var flashcardSets = setService.findSets(group);
+
     var response = flashcardSets.stream().map(e -> new FlashcardSetResponse(e)).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }

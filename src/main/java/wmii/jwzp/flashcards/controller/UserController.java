@@ -40,6 +40,7 @@ public class UserController {
   public ResponseEntity<SessionResponse> loginUser(@RequestHeader("Authorization") String authHeader) {
     var userInput = BasicAuth.decode(authHeader);
     var session = userService.login(userInput.getNick(), userInput.getPassword());
+
     var sessionResponse = new SessionResponse(session);
     return ResponseEntity.ok().headers(
         new Headers().addSid(session.getId())).body(sessionResponse);
@@ -48,6 +49,7 @@ public class UserController {
   @PostMapping("/session")
   public ResponseEntity<SessionResponse> refreshSession(@CookieValue("sid") String authToken) {
     var session = userService.refreshSession(authToken);
+
     var sessionResponse = new SessionResponse(session);
     return ResponseEntity.ok().headers(
         new Headers().addSid(session.getId())).body(sessionResponse);
