@@ -74,7 +74,7 @@ public class StudyGroupController {
       @CookieValue("sid") String authToken) {
     var user = userService.getUserBySessionToken(authToken);
     var studyGroup = groupService.createGroup(groupInput);
-    groupService.joinGroup(studyGroup, user, AccessLevels.ADMIN);
+    userGroupLinkService.joinGroup(studyGroup, user, AccessLevels.ADMIN);
     var response = new StudyGroupResponse(studyGroup);
     return ResponseEntity.ok(response);
   }
@@ -121,7 +121,7 @@ public class StudyGroupController {
       @CookieValue("sid") String authToken) {
     var user = userService.getUserBySessionToken(authToken);
     var group = groupService.getGroupById(groupId);
-    groupService.joinGroup(group, user, AccessLevels.GUEST);
+    userGroupLinkService.joinGroup(group, user, AccessLevels.GUEST);
     var response = new StudyGroupResponse(group);
     return ResponseEntity.ok(response);
   }
@@ -148,6 +148,19 @@ public class StudyGroupController {
 
     var updateUser = userService.getUserById(userId);
     var link = userGroupLinkService.updateAccessLevel(group, updateUser, linkInput.getAccessLevel());
+    var response = new UserGroupLinkResponse(link);
+    return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/{group_id}/users/{user_id}")
+  public ResponseEntity<UserGroupLinkResponse> removeUser(@PathVariable("group_id") String groupId,
+      @PathVariable("user_id") String userId, @CookieValue("sid") String authToken,
+      @RequestBody LinkUpdateInput linkInput) {
+    var user = userService.getUserBySessionToken(authToken);
+    var group = groupService.getGroupById("group_id");
+    userGroupLinkService.verifyUserAction(user, group, AccessLevels.ADMIN);
+
+    var link = userGroupLinkService.leaveGroup(group, user);
     var response = new UserGroupLinkResponse(link);
     return ResponseEntity.ok(response);
   }

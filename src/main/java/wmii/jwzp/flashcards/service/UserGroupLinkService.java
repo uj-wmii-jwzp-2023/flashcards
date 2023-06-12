@@ -40,8 +40,23 @@ public class UserGroupLinkService {
     }
   }
 
-  public UserGroupLinkModel updateAccessLevel(StudyGroupModel group, UserModel user, int access_level) {
+  public UserGroupLinkModel joinGroup(StudyGroupModel group, UserModel user, int accessLevel) {
+    var userGroupLink = new UserGroupLinkModel();
+    userGroupLink.setUserId(user.getId());
+    userGroupLink.setGroupId(group.getId());
+    userGroupLink.setCreatedAt();
+    userGroupLink.setAccessLevel(accessLevel);
+    userGroupLinkRepository.save(userGroupLink);
+    return userGroupLink;
+  }
 
+  public UserGroupLinkModel leaveGroup(StudyGroupModel group, UserModel user) {
+    var userGroupLink = userGroupLinkRepository.getById(user.getId(), group.getId());
+    userGroupLinkRepository.delete(userGroupLink.get());
+    return userGroupLink.get();
+  }
+
+  public UserGroupLinkModel updateAccessLevel(StudyGroupModel group, UserModel user, int access_level) {
     var linkId = new UserGroupLinkModelId();
     linkId.user_id = user.getId();
     linkId.group_id = group.getId();
