@@ -6,7 +6,10 @@ import org.springframework.data.annotation.CreatedDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -26,6 +29,10 @@ public class SessionModel {
 
   @Column(name = "expires_at")
   private LocalDateTime expiresAt;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
+  private UserModel user;
 
   public String getId() {
     return id;
@@ -83,7 +90,7 @@ public class SessionModel {
     this.expiresAt = LocalDateTime.now().plusDays(days);
   }
 
-  public boolean isExpired() {
+  public Boolean isExpired() {
     return LocalDateTime.now().isAfter(expiresAt);
   }
 

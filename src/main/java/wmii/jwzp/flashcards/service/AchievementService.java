@@ -1,6 +1,8 @@
 package wmii.jwzp.flashcards.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import wmii.jwzp.flashcards.model.achievements.AchievementFactory;
+import wmii.jwzp.flashcards.model.db.AnswerEntryModel;
 import wmii.jwzp.flashcards.model.db.GroupAchievementModel;
 import wmii.jwzp.flashcards.model.db.StudyGroupModel;
 import wmii.jwzp.flashcards.model.db.UserAchievementModel;
@@ -75,6 +78,22 @@ public class AchievementService {
   public List<UserAchievementModel> getAchievements(StudyGroupModel groupModel, UserModel userModel) {
     var achievements = userAchievementRepository.findAllByGroupIdUserId(groupModel.getId(), userModel.getId());
     return achievements;
+  }
+
+  public List<UserAchievementModel> grantAchievements(AnswerEntryModel answerModel) {
+    var groupId = answerModel.getSet().getGroupId();
+    if (groupId == null) {
+      return null;
+    }
+
+    var availableAchievements = groupAchievementRepository.findAllByGroupId(groupId);
+    var userAchievements = availableAchievements.stream()
+        .filter(e -> achievementFactory.getAchievementClass(e.getName()).isEligible(answerModel))
+        .map(e -> achievementFactory.getAchievementClass(e.getName()).create(answerModel.getUserId(), groupId))
+        .collect(Collectors.toList());
+    userAchievements.forEach(e -> userAchievementRepository.save(e));
+
+    return userAchievements;
   }
 
 }

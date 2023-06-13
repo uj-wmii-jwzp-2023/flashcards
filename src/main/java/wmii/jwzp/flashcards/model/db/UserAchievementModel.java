@@ -45,19 +45,19 @@ public class UserAchievementModel {
     this.name = name;
   }
 
-  public String getGroup_id() {
+  public String getGroupId() {
     return this.group_id;
   }
 
-  public void setGroup_id(String groupId) {
+  public void setGroupId(String groupId) {
     this.group_id = groupId;
   }
 
-  public String getUser_id() {
+  public String getUserId() {
     return this.user_id;
   }
 
-  public void setUser_id(String userId) {
+  public void setUserId(String userId) {
     this.user_id = userId;
   }
 }

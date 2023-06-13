@@ -15,13 +15,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import wmii.jwzp.flashcards.model.api.input.AnswerInput;
 import wmii.jwzp.flashcards.model.api.input.CardInput;
 import wmii.jwzp.flashcards.model.api.input.SetCreationInput;
 import wmii.jwzp.flashcards.model.api.input.SetUpdateInput;
 import wmii.jwzp.flashcards.model.api.output.CardResponse;
 import wmii.jwzp.flashcards.model.api.output.FlashcardSetResponse;
+import wmii.jwzp.flashcards.model.api.output.UserAchievementResponse;
+import wmii.jwzp.flashcards.service.AchievementService;
+import wmii.jwzp.flashcards.service.AnswerEntryService;
 import wmii.jwzp.flashcards.service.CardService;
 import wmii.jwzp.flashcards.service.FlashcardSetService;
 import wmii.jwzp.flashcards.service.StudyGroupService;
@@ -49,6 +54,12 @@ public class FlashcardSetController {
 
   @Autowired()
   private CardService cardService;
+
+  @Autowired()
+  private AnswerEntryService answerService;
+
+  @Autowired()
+  private AchievementService achievementsService;
 
   @GetMapping()
   public ResponseEntity<List<FlashcardSetResponse>> getSets() {
@@ -113,12 +124,16 @@ public class FlashcardSetController {
 
   @GetMapping("/{set_id}/cards")
   public ResponseEntity<List<CardResponse>> getCards(@CookieValue("sid") String authToken,
-      @PathVariable("set_id") String setId) {
+      @PathVariable("set_id") String setId, @RequestParam(name = "start_entry", required = false) String startEntry) {
     var user = userService.getUserBySessionToken(authToken);
     var flashcardSet = setService.getSet(setId);
     setService.verifyUserAction(user, flashcardSet, AccessLevels.ADMIN);
 
     var cards = cardService.getCards(flashcardSet);
+
+    if ("true".equals(startEntry)) {
+      answerService.startEntry(user, flashcardSet);
+    }
 
     var response = cards.stream().map(e -> new CardResponse(e)).collect(Collectors.toList());
     return ResponseEntity.ok(response);
@@ -162,6 +177,20 @@ public class FlashcardSetController {
     card = cardService.removeCard(card);
 
     var response = new CardResponse(card);
+    return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/{set_id}/answers")
+  public ResponseEntity<List<UserAchievementResponse>> submitAnswers(@CookieValue("sid") String authToken,
+      @PathVariable("set_id") String setId, @RequestBody AnswerInput input) {
+    var user = userService.getUserBySessionToken(authToken);
+    var flashcardSet = setService.getSet(setId);
+    setService.verifyUserAction(user, flashcardSet, AccessLevels.GUEST);
+
+    var answerEntry = answerService.checkAnswer(user, flashcardSet, input.cards);
+    var achievements = achievementsService.grantAchievements(answerEntry);
+
+    var response = achievements.stream().map(e -> new UserAchievementResponse(e)).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
 

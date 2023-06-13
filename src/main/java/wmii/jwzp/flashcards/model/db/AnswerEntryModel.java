@@ -1,11 +1,13 @@
 package wmii.jwzp.flashcards.model.db;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,15 +26,39 @@ public class AnswerEntryModel {
   @Column(name = "started_at")
   private LocalDateTime startedAt;
 
-  @Column(name = "ended_at")
-  private LocalDate endedAt;
+  @Column(name = "end_at")
+  private LocalDateTime endedAt;
 
-  public LocalDate getEndedAt() {
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
+  private UserModel user;
+
+  public UserModel getUser() {
+    return user;
+  }
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "set_id", nullable = false, insertable = false, updatable = false)
+  private FlashcardSetModel flashcardSet;
+
+  public FlashcardSetModel getSet() {
+    return flashcardSet;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public LocalDateTime getEndedAt() {
     return endedAt;
   }
 
-  public void setEndedAt(LocalDate endedAt) {
-    this.endedAt = endedAt;
+  public void setEndedAt() {
+    this.endedAt = LocalDateTime.now();
   }
 
   public LocalDateTime getStartedAt() {

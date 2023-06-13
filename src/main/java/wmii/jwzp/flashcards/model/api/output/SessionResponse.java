@@ -4,38 +4,14 @@ import wmii.jwzp.flashcards.model.db.SessionModel;
 
 public class SessionResponse {
 
-  private String id;
-  private String userId;
-  private String expiresAt;
+  public String id;
+  public String user_id;
+  public String expires_at;
 
   public SessionResponse(SessionModel sessionModel) {
     this.id = sessionModel.getId();
-    this.userId = sessionModel.getUserId();
-    this.expiresAt = sessionModel.getExpiresAt().toString();
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getUserId() {
-    return userId;
-  }
-
-  public void setUserId(String userId) {
-    this.userId = userId;
-  }
-
-  public String getExpiresAt() {
-    return expiresAt;
-  }
-
-  public void setExpiresAt(String expiresAt) {
-    this.expiresAt = expiresAt;
+    this.user_id = sessionModel.getUserId();
+    this.expires_at = sessionModel.getExpiresAt().toString();
   }
 
 }

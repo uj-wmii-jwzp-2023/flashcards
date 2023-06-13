@@ -1,5 +1,6 @@
 package wmii.jwzp.flashcards.model.achievements;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +10,10 @@ import wmii.jwzp.flashcards.utils.errors.BadRequest;
 @Scope("singleton")
 public class AchievementFactory {
 
-  public boolean verifyAchievement(String name) {
+  @Autowired
+  private OneSetAchievement oneSetAchievement;
+
+  public Boolean verifyAchievement(String name) {
     switch (name) {
       case "oneset": {
         return true;
@@ -20,10 +24,10 @@ public class AchievementFactory {
     }
   }
 
-  public IAchievement getAchievementClass(String name) {
+  public Achievement getAchievementClass(String name) {
     switch (name) {
       case "oneset": {
-        return new OneSetAchievement();
+        return oneSetAchievement;
       }
       default: {
         throw new BadRequest("Achievement does not exist.");

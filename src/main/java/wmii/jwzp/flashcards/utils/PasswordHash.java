@@ -16,7 +16,7 @@ public class PasswordHash {
     }
   }
 
-  public static boolean compare(String providedPassword, String hashedString) {
+  public static Boolean compare(String providedPassword, String hashedString) {
 
     try {
       MessageDigest md = MessageDigest.getInstance("SHA-512");
