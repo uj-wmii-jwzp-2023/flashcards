@@ -10,6 +10,8 @@ import wmii.jwzp.flashcards.model.db.UserGroupLinkModel;
 import wmii.jwzp.flashcards.model.db.UserModel;
 import wmii.jwzp.flashcards.model.internal.UserGroupLinkModelId;
 import wmii.jwzp.flashcards.repository.UserGroupLinkRepository;
+import wmii.jwzp.flashcards.utils.AccessLevels;
+import wmii.jwzp.flashcards.utils.errors.BadRequest;
 import wmii.jwzp.flashcards.utils.errors.NotFound;
 import wmii.jwzp.flashcards.utils.errors.Unauthorized;
 
@@ -40,8 +42,28 @@ public class UserGroupLinkService {
     }
   }
 
-  public UserGroupLinkModel updateAccessLevel(StudyGroupModel group, UserModel user, int access_level) {
+  public UserGroupLinkModel joinGroup(StudyGroupModel group, UserModel user, int accessLevel) {
+    var userGroupLink = new UserGroupLinkModel();
+    userGroupLink.setUserId(user.getId());
+    userGroupLink.setGroupId(group.getId());
+    userGroupLink.setCreatedAt();
+    userGroupLink.setAccessLevel(accessLevel);
+    userGroupLinkRepository.save(userGroupLink);
+    return userGroupLink;
+  }
 
+  public UserGroupLinkModel leaveGroup(StudyGroupModel group, UserModel user) {
+    var link = userGroupLinkRepository.getById(user.getId(), group.getId());
+    var groupLinks = userGroupLinkRepository.findByGroupId(group.getId());
+    var adminCount = groupLinks.stream().filter(e -> e.getAccessLevel() == AccessLevels.ADMIN).count();
+    if (adminCount == 1 && link.get().getAccessLevel() == AccessLevels.ADMIN) {
+      throw new BadRequest("User is the only admin and cannot be removed.");
+    }
+    userGroupLinkRepository.delete(link.get());
+    return link.get();
+  }
+
+  public UserGroupLinkModel updateAccessLevel(StudyGroupModel group, UserModel user, int newAccessLevel) {
     var linkId = new UserGroupLinkModelId();
     linkId.user_id = user.getId();
     linkId.group_id = group.getId();
@@ -49,7 +71,13 @@ public class UserGroupLinkService {
     if (!link.isPresent()) {
       throw new NotFound("User does not belong to that group");
     }
-    link.get().setAccessLevel(access_level);
+    var groupLinks = userGroupLinkRepository.findByGroupId(group.getId());
+    var adminCount = groupLinks.stream().filter(e -> e.getAccessLevel() == AccessLevels.ADMIN).count();
+    if (adminCount == 1 && link.get().getAccessLevel() == AccessLevels.ADMIN && newAccessLevel != AccessLevels.ADMIN) {
+      throw new BadRequest("User is the only admin and cannot be removed.");
+    }
+
+    link.get().setAccessLevel(newAccessLevel);
     userGroupLinkRepository.save(link.get());
     return link.get();
   }

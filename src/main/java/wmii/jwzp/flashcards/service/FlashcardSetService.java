@@ -78,7 +78,7 @@ public class FlashcardSetService {
     }
   }
 
-  public void updateSet(FlashcardSetModel flashcardSet, SetUpdateInput input) {
+  public FlashcardSetModel updateSet(FlashcardSetModel flashcardSet, SetUpdateInput input) {
     if (input.is_public != null) {
       flashcardSet.setIsPublic(input.is_public);
     }
@@ -86,6 +86,12 @@ public class FlashcardSetService {
       flashcardSet.setName(input.name);
     }
     setRepository.save(flashcardSet);
+    return flashcardSet;
+  }
+
+  public FlashcardSetModel removeSet(FlashcardSetModel flashcardSet) {
+    setRepository.delete(flashcardSet);
+    return flashcardSet;
   }
 
   /*

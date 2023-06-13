@@ -10,10 +10,8 @@ import org.springframework.stereotype.Service;
 
 import wmii.jwzp.flashcards.model.api.input.StudyGroupInput;
 import wmii.jwzp.flashcards.model.db.StudyGroupModel;
-import wmii.jwzp.flashcards.model.db.UserGroupLinkModel;
 import wmii.jwzp.flashcards.model.db.UserModel;
 import wmii.jwzp.flashcards.repository.StudyGroupRepository;
-import wmii.jwzp.flashcards.repository.UserGroupLinkRepository;
 import wmii.jwzp.flashcards.repository.UserRepository;
 import wmii.jwzp.flashcards.utils.errors.NotFound;
 
@@ -27,9 +25,6 @@ public class StudyGroupService {
 
   @Autowired
   private StudyGroupRepository groupRepository;
-
-  @Autowired
-  private UserGroupLinkRepository userGroupLinkRepository;
 
   public List<StudyGroupModel> getAllGroups() {
     return groupRepository.findAll();
@@ -65,15 +60,6 @@ public class StudyGroupService {
   public StudyGroupModel deleteGroup(StudyGroupModel group) {
     groupRepository.delete(group);
     return group;
-  }
-
-  public void joinGroup(StudyGroupModel group, UserModel user, int accessLevel) {
-    var userGroupLink = new UserGroupLinkModel();
-    userGroupLink.setUserId(user.getId());
-    userGroupLink.setGroupId(group.getId());
-    userGroupLink.setCreatedAt();
-    userGroupLink.setAccessLevel(accessLevel);
-    userGroupLinkRepository.save(userGroupLink);
   }
 
   public List<StudyGroupModel> getGroupsByUser(UserModel user) {

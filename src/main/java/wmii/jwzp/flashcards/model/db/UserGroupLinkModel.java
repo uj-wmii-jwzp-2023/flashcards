@@ -18,8 +18,6 @@ import wmii.jwzp.flashcards.model.internal.UserGroupLinkModelId;
 @IdClass(UserGroupLinkModelId.class)
 @Table(name = "users_groups")
 public class UserGroupLinkModel {
-  // @EmbeddedId
-  // UserGroupLinkModelId id = new UserGroupLinkModelId();
 
   @Id
   public String user_id;
