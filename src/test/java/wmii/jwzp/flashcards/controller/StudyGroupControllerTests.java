@@ -2,7 +2,6 @@ package wmii.jwzp.flashcards.controller;
 
 import wmii.jwzp.flashcards.model.api.input.LinkUpdateInput;
 import wmii.jwzp.flashcards.model.api.input.StudyGroupInput;
-import wmii.jwzp.flashcards.model.api.output.SessionResponse;
 import wmii.jwzp.flashcards.model.db.SessionModel;
 import wmii.jwzp.flashcards.model.db.StudyGroupModel;
 import wmii.jwzp.flashcards.model.db.UserGroupLinkModel;
