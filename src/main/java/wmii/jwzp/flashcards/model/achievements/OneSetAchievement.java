@@ -21,7 +21,7 @@ public class OneSetAchievement extends Achievement {
   private AnswerEntryRepository answerRepository;
 
   public String getName() {
-    return "oneset";
+    return "firstset";
   }
 
   public Boolean isEligible(AnswerEntryModel entry) {

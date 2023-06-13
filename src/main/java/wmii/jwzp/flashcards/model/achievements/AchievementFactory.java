@@ -15,7 +15,7 @@ public class AchievementFactory {
 
   public Boolean verifyAchievement(String name) {
     switch (name) {
-      case "oneset": {
+      case "firstset": {
         return true;
       }
       default: {
@@ -26,7 +26,7 @@ public class AchievementFactory {
 
   public Achievement getAchievementClass(String name) {
     switch (name) {
-      case "oneset": {
+      case "firstset": {
         return oneSetAchievement;
       }
       default: {
