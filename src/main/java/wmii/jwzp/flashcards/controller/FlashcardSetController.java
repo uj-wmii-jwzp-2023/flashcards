@@ -68,6 +68,16 @@ public class FlashcardSetController {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping()
+  public ResponseEntity<List<FlashcardSetResponse>> getSets(@CookieValue("sid") String authToken) {
+    var user = userService.getUserBySessionToken(authToken);
+    var sets = setService.findSets();
+    var userSets = setService.findSets(user);
+    sets.addAll(userSets);
+    var response = sets.stream().map(e -> new FlashcardSetResponse(e)).collect(Collectors.toList());
+    return ResponseEntity.ok(response);
+  }
+
   @PostMapping()
   public ResponseEntity<FlashcardSetResponse> createSet(@CookieValue("sid") String authToken,
       @RequestBody SetCreationInput setInput) {
@@ -83,12 +93,12 @@ public class FlashcardSetController {
   }
 
   @GetMapping("/{set_id}")
-  public ResponseEntity<FlashcardSetResponse> getSet(@CookieValue("sid") String authToken,
+  public ResponseEntity<FlashcardSetResponse> getSet(@CookieValue(name = "sid", required = false) String authToken,
       @PathVariable("set_id") String setId) {
-    var user = userService.getUserBySessionToken(authToken);
+    var user = authToken != null ? userService.getUserBySessionToken(authToken) : null;
     var flashcardSet = setService.getSet(setId);
 
-    setService.verifyUserAction(user, flashcardSet, AccessLevels.ADMIN);
+    setService.verifyUserAction(user, flashcardSet, AccessLevels.GUEST);
 
     var response = new FlashcardSetResponse(flashcardSet);
     return ResponseEntity.ok(response);
@@ -123,11 +133,11 @@ public class FlashcardSetController {
   }
 
   @GetMapping("/{set_id}/cards")
-  public ResponseEntity<List<CardResponse>> getCards(@CookieValue("sid") String authToken,
+  public ResponseEntity<List<CardResponse>> getCards(@CookieValue(name = "sid", required = false) String authToken,
       @PathVariable("set_id") String setId, @RequestParam(name = "start_entry", required = false) String startEntry) {
-    var user = userService.getUserBySessionToken(authToken);
+    var user = authToken != null ? userService.getUserBySessionToken(authToken) : null;
     var flashcardSet = setService.getSet(setId);
-    setService.verifyUserAction(user, flashcardSet, AccessLevels.ADMIN);
+    setService.verifyUserAction(user, flashcardSet, AccessLevels.GUEST);
 
     var cards = cardService.getCards(flashcardSet);
 

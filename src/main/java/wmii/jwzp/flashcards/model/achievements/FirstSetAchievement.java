@@ -12,7 +12,7 @@ import wmii.jwzp.flashcards.repository.UserAchievementRepository;
 
 @Component
 @Scope("singleton")
-public class OneSetAchievement extends Achievement {
+public class FirstSetAchievement extends Achievement {
 
   @Autowired
   private UserAchievementRepository userAchievementRepository;

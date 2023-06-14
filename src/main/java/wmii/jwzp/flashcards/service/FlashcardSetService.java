@@ -35,8 +35,6 @@ public class FlashcardSetService {
   private UserGroupLinkService userGroupLinkService;
 
   public void verifyUserAction(UserModel user, FlashcardSetModel flashcardSet, int requiredAccess) {
-    logger.info("USER ID: " + user.getId() + " SET ID: " + flashcardSet.getId());
-
     if (flashcardSet.getGroupId() != null) {
       var group = groupService.getGroupById(flashcardSet.getGroupId());
       userGroupLinkService.verifyUserAction(user, group, requiredAccess);

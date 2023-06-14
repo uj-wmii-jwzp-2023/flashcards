@@ -23,9 +23,9 @@ import wmii.jwzp.flashcards.model.api.input.StudyGroupInput;
 import wmii.jwzp.flashcards.model.api.output.FlashcardSetResponse;
 import wmii.jwzp.flashcards.model.api.output.GroupAchievementResponse;
 import wmii.jwzp.flashcards.model.api.output.StudyGroupResponse;
+import wmii.jwzp.flashcards.model.api.output.UserAchievementResponse;
 import wmii.jwzp.flashcards.model.api.output.UserGroupLinkResponse;
 import wmii.jwzp.flashcards.model.api.output.UserResponse;
-import wmii.jwzp.flashcards.model.db.StudyGroupModel;
 import wmii.jwzp.flashcards.service.AchievementService;
 import wmii.jwzp.flashcards.service.FlashcardSetService;
 import wmii.jwzp.flashcards.service.StudyGroupService;
@@ -53,13 +53,6 @@ public class StudyGroupController {
 
   @Autowired()
   private AchievementService achievementService;
-
-  // TODO: this is here for debugging, remove it later
-  @GetMapping("/admin")
-  public ResponseEntity<List<StudyGroupModel>> getAllGroups(@CookieValue("sid") String authToken) {
-    var groups = groupService.getAllGroups();
-    return ResponseEntity.ok(groups);
-  }
 
   @GetMapping()
   public ResponseEntity<List<StudyGroupResponse>> getGroups(@CookieValue("sid") String authToken) {
@@ -141,6 +134,19 @@ public class StudyGroupController {
     var usersInGroup = groupService.getUsersInGroup(group);
 
     var response = usersInGroup.stream().map(e -> new UserResponse(e)).collect(Collectors.toList());
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/{group_id}/users/{user_id}/achievements")
+  public ResponseEntity<List<UserAchievementResponse>> getUserAchievements(@PathVariable("group_id") String groupId,
+      @PathVariable("user_id") String userId, @CookieValue("sid") String authToken) {
+    var user = userService.getUserBySessionToken(authToken);
+    var group = groupService.getGroupById("group_id");
+    userGroupLinkService.verifyUserAction(user, group, AccessLevels.GUEST);
+
+    var achievements = achievementService.getAchievements(user);
+
+    var response = achievements.stream().map(e -> new UserAchievementResponse(e)).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
 

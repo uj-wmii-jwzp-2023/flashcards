@@ -11,11 +11,17 @@ import wmii.jwzp.flashcards.utils.errors.BadRequest;
 public class AchievementFactory {
 
   @Autowired
-  private OneSetAchievement oneSetAchievement;
+  private FirstSetAchievement oneSetAchievement;
+
+  @Autowired
+  private Minutes10Achievement minutes10Achievement;
 
   public Boolean verifyAchievement(String name) {
     switch (name) {
       case "firstset": {
+        return true;
+      }
+      case "minutes10": {
         return true;
       }
       default: {
@@ -28,6 +34,9 @@ public class AchievementFactory {
     switch (name) {
       case "firstset": {
         return oneSetAchievement;
+      }
+      case "minutes10": {
+        return minutes10Achievement;
       }
       default: {
         throw new BadRequest("Achievement does not exist.");
