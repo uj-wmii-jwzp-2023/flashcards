@@ -1,9 +1,5 @@
 name: build, and test
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - master 
+on: push
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,3 +19,11 @@ jobs:
         with:
           name: jarka
           path: ./build/libs/flashcards_bootjar.jar
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/gradle-jdk17@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
