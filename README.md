@@ -91,4 +91,3 @@ Classes for easy error throwing, authenticating, setting headers etc.
 | /flashcard_sets/{set_id}/cards/{card_id} | PATCH | yes | set owner or group admin | edit card |
 | /flashcard_sets/{set_id}/cards/{card_id} | DELETE | yes | set owner or group admin | remove card |
 | /flashcard_sets/{set_id}/answers | POST | yes* | any logger user for public sets or group guest for group sets | submit answers |
-|  |  |  |  |  |
