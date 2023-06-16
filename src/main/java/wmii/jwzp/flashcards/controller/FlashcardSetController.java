@@ -88,7 +88,7 @@ public class FlashcardSetController {
     var user = userService.getUserBySessionToken(authToken);
     if (setInput.group_id != null) {
       var group = groupService.getGroupById(setInput.group_id);
-      userGroupLinkService.verifyUserAction(user, group, AccessLevels.GUEST);
+      userGroupLinkService.verifyUserAction(user, group, AccessLevels.ADMIN);
     }
     var newSet = setService.createSet(setInput, user);
 
