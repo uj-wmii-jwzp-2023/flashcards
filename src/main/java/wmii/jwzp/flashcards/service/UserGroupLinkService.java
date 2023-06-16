@@ -25,6 +25,9 @@ public class UserGroupLinkService {
 
   public void verifyUserAction(UserModel user, StudyGroupModel group, int requiredAccess) {
     logger.info("USER ID: " + user.getId() + " GROUP ID: " + group.getId());
+    if (user == null || group == null) {
+      throw new Unauthorized("Unauthorized");
+    }
     var linkId = new UserGroupLinkModelId();
     linkId.user_id = user.getId();
     linkId.group_id = group.getId();

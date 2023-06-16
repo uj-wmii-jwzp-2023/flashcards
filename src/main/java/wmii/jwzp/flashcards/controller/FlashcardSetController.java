@@ -68,7 +68,10 @@ public class FlashcardSetController {
   @GetMapping()
   public ResponseEntity<List<FlashcardSetResponse>> getSets(
       @CookieValue(name = "sid", required = false) String authToken) {
-    var user = authToken != null ? userService.getUserBySessionToken(authToken) : null;
+    logger.info("auth token:" + authToken);
+    var user = (authToken != null && !"".equals(authToken)) ? userService.getUserBySessionToken(authToken) : null;
+    logger.info("HERE:");
+
     var sets = setService.findSets();
     // filter out public sets to avoid duplicates in response
     var userSets = user != null
@@ -96,7 +99,7 @@ public class FlashcardSetController {
   @GetMapping("/{set_id}")
   public ResponseEntity<FlashcardSetResponse> getSet(@CookieValue(name = "sid", required = false) String authToken,
       @PathVariable("set_id") String setId, @RequestHeader(name = "auth_token", required = false) String authHeader) {
-    var user = authToken != null ? userService.getUserBySessionToken(authToken) : null;
+    var user = (authToken != null && !"".equals(authToken)) ? userService.getUserBySessionToken(authToken) : null;
     var flashcardSet = setService.getSet(setId);
 
     setService.verifyUserAction(user, flashcardSet, AccessLevels.GUEST, authHeader);
@@ -109,7 +112,7 @@ public class FlashcardSetController {
   public ResponseEntity<String> getAuthToken(
       @CookieValue("sid") String authToken,
       @PathVariable("set_id") String setId) {
-    var user = authToken != null ? userService.getUserBySessionToken(authToken) : null;
+    var user = (authToken != null && !"".equals(authToken)) ? userService.getUserBySessionToken(authToken) : null;
     var flashcardSet = setService.getSet(setId);
 
     setService.verifyUserAction(user, flashcardSet, AccessLevels.ADMIN);
@@ -166,7 +169,7 @@ public class FlashcardSetController {
   public ResponseEntity<List<CardResponse>> getCards(@CookieValue(name = "sid", required = false) String authToken,
       @PathVariable("set_id") String setId, @RequestParam(name = "start_entry", required = false) String startEntry,
       @RequestHeader(name = "auth_token", required = false) String authHeader) {
-    var user = authToken != null ? userService.getUserBySessionToken(authToken) : null;
+    var user = (authToken != null && !"".equals(authToken)) ? userService.getUserBySessionToken(authToken) : null;
     var flashcardSet = setService.getSet(setId);
     setService.verifyUserAction(user, flashcardSet, AccessLevels.GUEST, authHeader);
 

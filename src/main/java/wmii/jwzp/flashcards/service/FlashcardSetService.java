@@ -36,27 +36,25 @@ public class FlashcardSetService {
   private UserGroupLinkService userGroupLinkService;
 
   public void verifyUserAction(UserModel user, FlashcardSetModel flashcardSet, int requiredAccess) {
-    if (flashcardSet.getGroupId() != null) {
-      var group = groupService.getGroupById(flashcardSet.getGroupId());
-      userGroupLinkService.verifyUserAction(user, group, requiredAccess);
-    } else {
-      if (!flashcardSet.isPublic() && !user.getId().equals(flashcardSet.getUserId())) {
-        throw new Unauthorized("User is not allowed to perform this action");
-      }
-    }
-  }
-
-  public void verifyUserAction(UserModel user, FlashcardSetModel flashcardSet, int requiredAccess, String authHeader) {
-    if (authHeader == flashcardSet.getAuthToken()) {
+    if (flashcardSet.isPublic()) {
       return;
     }
     if (flashcardSet.getGroupId() != null) {
       var group = groupService.getGroupById(flashcardSet.getGroupId());
       userGroupLinkService.verifyUserAction(user, group, requiredAccess);
     } else {
-      if (!flashcardSet.isPublic() && !user.getId().equals(flashcardSet.getUserId())) {
+      if (user == null || !user.getId().equals(flashcardSet.getUserId())) {
         throw new Unauthorized("User is not allowed to perform this action");
       }
+    }
+  }
+
+  public void verifyUserAction(UserModel user, FlashcardSetModel flashcardSet, int requiredAccess, String authHeader) {
+    logger.info("authHeader:" + authHeader + ".");
+    if (flashcardSet.getAuthToken().equals(authHeader)) {
+      return;
+    } else {
+      this.verifyUserAction(user, flashcardSet, requiredAccess);
     }
   }
 
