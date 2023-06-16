@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import wmii.jwzp.flashcards.model.api.input.CardInput;
 import wmii.jwzp.flashcards.model.api.input.SetCreationInput;
 import wmii.jwzp.flashcards.model.api.input.SetUpdateInput;
 import wmii.jwzp.flashcards.model.db.FlashcardSetModel;
@@ -45,6 +46,20 @@ public class FlashcardSetService {
     }
   }
 
+  public void verifyUserAction(UserModel user, FlashcardSetModel flashcardSet, int requiredAccess, String authHeader) {
+    if (authHeader == flashcardSet.getAuthToken()) {
+      return;
+    }
+    if (flashcardSet.getGroupId() != null) {
+      var group = groupService.getGroupById(flashcardSet.getGroupId());
+      userGroupLinkService.verifyUserAction(user, group, requiredAccess);
+    } else {
+      if (!flashcardSet.isPublic() && !user.getId().equals(flashcardSet.getUserId())) {
+        throw new Unauthorized("User is not allowed to perform this action");
+      }
+    }
+  }
+
   public FlashcardSetModel createSet(SetCreationInput input, UserModel user) {
     var newSet = new FlashcardSetModel();
     String id = UUID.randomUUID().toString();
@@ -57,6 +72,7 @@ public class FlashcardSetService {
     }
     newSet.setName(input.name);
     newSet.setIsPublic(input.is_public != null ? input.is_public : false);
+    newSet.setAuthToken(UUID.randomUUID().toString());
 
     setRepository.save(newSet);
 
@@ -89,6 +105,31 @@ public class FlashcardSetService {
 
   public FlashcardSetModel removeSet(FlashcardSetModel flashcardSet) {
     setRepository.delete(flashcardSet);
+    return flashcardSet;
+  }
+
+  public FlashcardSetModel cloneSet(FlashcardSetModel flashcardSet, UserModel user) {
+    var newSet = new FlashcardSetModel();
+    String id = UUID.randomUUID().toString();
+    newSet.setId(id);
+    newSet.setCreatedAt();
+    newSet.setUserId(user.getId());
+    newSet.setName(flashcardSet.getName());
+    newSet.setIsPublic(flashcardSet.isPublic());
+
+    setRepository.save(newSet);
+
+    if (flashcardSet.getCards() != null && !flashcardSet.getCards().isEmpty()) {
+
+      flashcardSet.getCards().forEach(card -> {
+        var cardInput = new CardInput();
+        cardInput.question = card.getQuestion();
+        cardInput.answer = card.getAnswer();
+        cardService.createCard(cardInput, newSet);
+      });
+    }
+
+    setRepository.save(flashcardSet);
     return flashcardSet;
   }
 

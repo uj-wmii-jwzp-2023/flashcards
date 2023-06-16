@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +36,7 @@ import wmii.jwzp.flashcards.service.StudyGroupService;
 import wmii.jwzp.flashcards.service.UserGroupLinkService;
 import wmii.jwzp.flashcards.service.UserService;
 import wmii.jwzp.flashcards.utils.AccessLevels;
+import wmii.jwzp.flashcards.utils.errors.ResourceConflict;
 
 @RestController
 @RequestMapping("/flashcard_sets")
@@ -93,13 +95,26 @@ public class FlashcardSetController {
 
   @GetMapping("/{set_id}")
   public ResponseEntity<FlashcardSetResponse> getSet(@CookieValue(name = "sid", required = false) String authToken,
+      @PathVariable("set_id") String setId, @RequestHeader(name = "auth_token", required = false) String authHeader) {
+    var user = authToken != null ? userService.getUserBySessionToken(authToken) : null;
+    var flashcardSet = setService.getSet(setId);
+
+    setService.verifyUserAction(user, flashcardSet, AccessLevels.GUEST, authHeader);
+
+    var response = new FlashcardSetResponse(flashcardSet);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/{set_id}/share")
+  public ResponseEntity<String> getAuthToken(
+      @CookieValue("sid") String authToken,
       @PathVariable("set_id") String setId) {
     var user = authToken != null ? userService.getUserBySessionToken(authToken) : null;
     var flashcardSet = setService.getSet(setId);
 
-    setService.verifyUserAction(user, flashcardSet, AccessLevels.GUEST);
+    setService.verifyUserAction(user, flashcardSet, AccessLevels.ADMIN);
 
-    var response = new FlashcardSetResponse(flashcardSet);
+    var response = flashcardSet.getAuthToken();
     return ResponseEntity.ok(response);
   }
 
@@ -131,16 +146,33 @@ public class FlashcardSetController {
     return ResponseEntity.ok(response);
   }
 
+  @PostMapping("/{set_id}/clone")
+  public ResponseEntity<FlashcardSetResponse> cloneSet(@CookieValue("sid") String authToken,
+      @PathVariable("set_id") String setId, @RequestHeader(name = "auth_token", required = false) String authHeader) {
+    var user = userService.getUserBySessionToken(authToken);
+    var flashcardSet = setService.getSet(setId);
+
+    setService.verifyUserAction(user, flashcardSet, AccessLevels.GUEST, authHeader);
+    if (flashcardSet.getUserId() == user.getId()) {
+      throw new ResourceConflict("User already cloned this set.");
+    }
+    flashcardSet = setService.cloneSet(flashcardSet, user);
+
+    var response = new FlashcardSetResponse(flashcardSet);
+    return ResponseEntity.ok(response);
+  }
+
   @GetMapping("/{set_id}/cards")
   public ResponseEntity<List<CardResponse>> getCards(@CookieValue(name = "sid", required = false) String authToken,
-      @PathVariable("set_id") String setId, @RequestParam(name = "start_entry", required = false) String startEntry) {
+      @PathVariable("set_id") String setId, @RequestParam(name = "start_entry", required = false) String startEntry,
+      @RequestHeader(name = "auth_token", required = false) String authHeader) {
     var user = authToken != null ? userService.getUserBySessionToken(authToken) : null;
     var flashcardSet = setService.getSet(setId);
-    setService.verifyUserAction(user, flashcardSet, AccessLevels.GUEST);
+    setService.verifyUserAction(user, flashcardSet, AccessLevels.GUEST, authHeader);
 
     var cards = cardService.getCards(flashcardSet);
 
-    if ("true".equals(startEntry)) {
+    if (user != null && "true".equals(startEntry)) {
       answerService.startEntry(user, flashcardSet);
     }
 

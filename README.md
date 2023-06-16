@@ -8,17 +8,17 @@ General functionalities
 - user can create/join study group
 - each group has an administrator 
 
-- admin can create/select available achievements
+- admin can select available achievements
 - admin can kick people out of the group
 - admin can promote to admin
-- admin can define what each user can do (add/remove/modify sets)
+- admin can define what each user can do (group roles)
 
 - user can create private/public/group flashcard sets
 - user can study the flashcard set
 - user can share private flashcard set
 - user can clone/modify flashcard set
 
-- measuring best completion time, completion count for each card speed for each card etc.
+- measuring completion time, completion count for each set
 - user can get achievements in study group based on completion time or streaks
 
 
@@ -81,10 +81,12 @@ Classes for easy error throwing, authenticating, setting headers etc.
 | /study_groups/{group_id}/achievements/{achievement_name} | DELETE | yes | group admin | disable achievement |
 | /flashcard_sets | GET | no |  | returns public and user owned sets |
 | /flashcard_sets | POST | yes |  | create new set (owned by user) |
-| /flashcard_sets/{set_id} | GET | no* | set owner, group user or public set | return set info |
+| /flashcard_sets/{set_id} | GET | no* | set owner, group user, public set or shared | return set info |
 | /flashcard_sets/{set_id} | PATCH | yes | set owner or group admin | edit set info |
 | /flashcard_sets/{set_id} | DELETE | yes | set owner or group admin | remove set |
-| /flashcard_sets/{set_id}/cards | GET | no* | set owner, group user of public set | return cards in a set |
+| /flashcard_sets/{set_id}/cards | GET | no* | set owner, group user, public set or shared | return cards in a set |
+| /flashcard_sets/{set_id}/share | GET | yes | set owner or group admin | return auth token for sharing |
+| /flashcard_sets/{set_id}/clone | POST | yes | group user, public set or shared | clone set into user space |
 | /flashcard_sets/{set_id}/cards | POST | yes | set owner or group admin | add card to a set |
 | /flashcard_sets/{set_id}/cards/{card_id} | PATCH | yes | set owner or group admin | edit card |
 | /flashcard_sets/{set_id}/cards/{card_id} | DELETE | yes | set owner or group admin | remove card |
