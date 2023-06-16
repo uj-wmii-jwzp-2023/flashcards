@@ -1,5 +1,7 @@
 package wmii.jwzp.flashcards.model.achievements;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,21 +21,14 @@ public class AchievementFactory {
   @Autowired
   private Days7Achievement days7Achievement;
 
+  private List<String> achievements = List.of("firstset", "minutes10", "days7");
+
+  public List<String> getAllAchievements() {
+    return this.achievements;
+  }
+
   public Boolean verifyAchievement(String name) {
-    switch (name) {
-      case "firstset": {
-        return true;
-      }
-      case "minutes10": {
-        return true;
-      }
-      case "days7": {
-        return true;
-      }
-      default: {
-        return false;
-      }
-    }
+    return this.achievements.contains(name);
   }
 
   public Achievement getAchievementClass(String name) {

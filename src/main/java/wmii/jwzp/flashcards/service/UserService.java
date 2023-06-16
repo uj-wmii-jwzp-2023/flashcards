@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import wmii.jwzp.flashcards.model.api.input.UserCreationInput;
 import wmii.jwzp.flashcards.model.db.SessionModel;
 import wmii.jwzp.flashcards.model.db.UserModel;
 import wmii.jwzp.flashcards.repository.SessionRepository;
 import wmii.jwzp.flashcards.repository.UserRepository;
 import wmii.jwzp.flashcards.utils.PasswordHash;
+import wmii.jwzp.flashcards.utils.errors.BadRequest;
 import wmii.jwzp.flashcards.utils.errors.NotFound;
 import wmii.jwzp.flashcards.utils.errors.ResourceConflict;
 import wmii.jwzp.flashcards.utils.errors.Unauthorized;
@@ -27,25 +29,29 @@ public class UserService {
   @Autowired
   SessionRepository sessionRepository;
 
-  public UserModel createUser(String nick, String password) {
+  public UserModel createUser(UserCreationInput input) {
 
-    if (userRepository.existsByNick(nick)) {
-      throw new ResourceConflict("User with nick " + nick + " already exists");
+    if (input.nick == null || input.password == null) {
+      throw new BadRequest("Invalid input");
     }
 
-    String hashedPassword = PasswordHash.hash(password);
+    if (userRepository.existsByNick(input.nick)) {
+      throw new ResourceConflict("User with nick " + input.nick + " already exists");
+    }
+
+    String hashedPassword = PasswordHash.hash(input.password);
     String id = UUID.randomUUID().toString();
 
     UserModel user = new UserModel();
     user.setId(id);
-    user.setNick(nick);
+    user.setNick(input.nick);
     user.setHashedPassword(hashedPassword);
     user.setCreatedAt();
 
     try {
       userRepository.insert(user.getId(), user.getNick(), user.getHashedPassword(), user.getCreatedAt());
     } catch (DataIntegrityViolationException e) {
-      throw new ResourceConflict("User with nick " + nick + " already exists");
+      throw new ResourceConflict("User with nick " + input.nick + " already exists");
     }
 
     return user;

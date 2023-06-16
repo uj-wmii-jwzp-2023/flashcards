@@ -12,6 +12,7 @@ import wmii.jwzp.flashcards.model.api.input.CardInput;
 import wmii.jwzp.flashcards.model.db.CardModel;
 import wmii.jwzp.flashcards.model.db.FlashcardSetModel;
 import wmii.jwzp.flashcards.repository.CardRepository;
+import wmii.jwzp.flashcards.utils.errors.BadRequest;
 import wmii.jwzp.flashcards.utils.errors.NotFound;
 
 @Service
@@ -23,6 +24,9 @@ public class CardService {
   private CardRepository cardRepository;
 
   public CardModel createCard(CardInput input, FlashcardSetModel flashcardSet) {
+    if (input.question == null || input.answer == null) {
+      throw new BadRequest("Invalid input");
+    }
     var card = new CardModel();
     String id = UUID.randomUUID().toString();
     card.setId(id);

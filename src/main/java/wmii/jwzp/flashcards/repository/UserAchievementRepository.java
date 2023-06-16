@@ -17,4 +17,7 @@ public interface UserAchievementRepository extends JpaRepository<UserAchievement
   public List<UserAchievementModel> findAllByGroupIdUserId(@Param("groupid") String groupId,
       @Param("userid") String userId);
 
+  @Query(value = "select a.* from user_achievements a where a.user_id = :userid and a.name = :name", nativeQuery = true)
+  public List<UserAchievementModel> findByUserIdAndName(@Param("userid") String userId, @Param("name") String name);
+
 }

@@ -14,6 +14,7 @@ public abstract class Achievement {
     achievement.setName(this.getName());
     achievement.setUserId(userId);
     achievement.setGroupId(groupId);
+    achievement.setCreatedAt();
     return achievement;
   }
 }

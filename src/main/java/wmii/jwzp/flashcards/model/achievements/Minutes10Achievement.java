@@ -3,6 +3,8 @@ package wmii.jwzp.flashcards.model.achievements;
 import java.time.Duration;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,8 @@ import wmii.jwzp.flashcards.repository.UserAchievementRepository;
 @Component
 @Scope("singleton")
 public class Minutes10Achievement extends Achievement {
+
+  Logger logger = LoggerFactory.getLogger(Minutes10Achievement.class);
 
   @Autowired
   private UserAchievementRepository userAchievementRepository;
@@ -27,6 +31,7 @@ public class Minutes10Achievement extends Achievement {
         .size() != 0) {
       return false;
     }
+
     var diff = Duration.between(entry.getStartedAt(), entry.getEndedAt()).toSeconds();
     if (diff > 10 * 60) {
       return false;

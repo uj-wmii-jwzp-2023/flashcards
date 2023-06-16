@@ -16,7 +16,7 @@ public interface AnswerEntryRepository extends JpaRepository<AnswerEntryModel, S
   @Query(value = "select a.* from answers a where a.user_id = :userid and a.end_at is null", nativeQuery = true)
   public Optional<AnswerEntryModel> findExistingForUser(@Param("userid") String userId);
 
-  @Query(value = "select a.* from answers a where a.user_id = :userid anda.set_id = :setid anda.end_at is null", nativeQuery = true)
+  @Query(value = "select a.* from answers a where a.user_id = :userid and a.set_id = :setid and a.end_at is null", nativeQuery = true)
   public Optional<AnswerEntryModel> findExistingForUserBySet(@Param("userid") String userId,
       @Param("setid") String setId);
 

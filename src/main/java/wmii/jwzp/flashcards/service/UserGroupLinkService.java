@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import wmii.jwzp.flashcards.model.api.input.LinkUpdateInput;
 import wmii.jwzp.flashcards.model.db.StudyGroupModel;
 import wmii.jwzp.flashcards.model.db.UserGroupLinkModel;
 import wmii.jwzp.flashcards.model.db.UserModel;
@@ -66,7 +67,11 @@ public class UserGroupLinkService {
     return link.get();
   }
 
-  public UserGroupLinkModel updateAccessLevel(StudyGroupModel group, UserModel user, int newAccessLevel) {
+  public UserGroupLinkModel updateLink(StudyGroupModel group, UserModel user, LinkUpdateInput input) {
+    if (input.access_level == null) {
+      throw new BadRequest("Invalid input");
+
+    }
     var linkId = new UserGroupLinkModelId();
     linkId.user_id = user.getId();
     linkId.group_id = group.getId();
@@ -76,11 +81,12 @@ public class UserGroupLinkService {
     }
     var groupLinks = userGroupLinkRepository.findByGroupId(group.getId());
     var adminCount = groupLinks.stream().filter(e -> e.getAccessLevel() == AccessLevels.ADMIN).count();
-    if (adminCount == 1 && link.get().getAccessLevel() == AccessLevels.ADMIN && newAccessLevel != AccessLevels.ADMIN) {
+    if (adminCount == 1 && link.get().getAccessLevel() == AccessLevels.ADMIN
+        && input.access_level != AccessLevels.ADMIN) {
       throw new BadRequest("User is the only admin and cannot be removed.");
     }
 
-    link.get().setAccessLevel(newAccessLevel);
+    link.get().setAccessLevel(input.access_level);
     userGroupLinkRepository.save(link.get());
     return link.get();
   }

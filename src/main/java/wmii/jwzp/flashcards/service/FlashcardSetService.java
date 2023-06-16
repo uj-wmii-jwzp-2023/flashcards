@@ -15,6 +15,7 @@ import wmii.jwzp.flashcards.model.db.FlashcardSetModel;
 import wmii.jwzp.flashcards.model.db.StudyGroupModel;
 import wmii.jwzp.flashcards.model.db.UserModel;
 import wmii.jwzp.flashcards.repository.FlashcardSetRepository;
+import wmii.jwzp.flashcards.utils.errors.BadRequest;
 import wmii.jwzp.flashcards.utils.errors.NotFound;
 import wmii.jwzp.flashcards.utils.errors.Unauthorized;
 
@@ -59,6 +60,10 @@ public class FlashcardSetService {
   }
 
   public FlashcardSetModel createSet(SetCreationInput input, UserModel user) {
+    if (input.name == null) {
+      throw new BadRequest("Invalid input");
+    }
+
     var newSet = new FlashcardSetModel();
     String id = UUID.randomUUID().toString();
     newSet.setId(id);

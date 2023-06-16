@@ -13,6 +13,7 @@ import wmii.jwzp.flashcards.model.db.StudyGroupModel;
 import wmii.jwzp.flashcards.model.db.UserModel;
 import wmii.jwzp.flashcards.repository.StudyGroupRepository;
 import wmii.jwzp.flashcards.repository.UserRepository;
+import wmii.jwzp.flashcards.utils.errors.BadRequest;
 import wmii.jwzp.flashcards.utils.errors.NotFound;
 
 @Service
@@ -39,19 +40,22 @@ public class StudyGroupService {
   }
 
   public StudyGroupModel createGroup(StudyGroupInput input) {
+    if (input.name == null) {
+      throw new BadRequest("Invalid input");
+    }
     var studyGroup = new StudyGroupModel();
     String id = UUID.randomUUID().toString();
     studyGroup.setId(id);
     studyGroup.setCreatedAt();
-    studyGroup.setName(input.getName());
+    studyGroup.setName(input.name);
     groupRepository.save(studyGroup);
 
     return studyGroup;
   }
 
   public StudyGroupModel updateGroup(StudyGroupModel group, StudyGroupInput input) {
-    if (input.getName() != null) {
-      group.setName(input.getName());
+    if (input.name != null) {
+      group.setName(input.name);
     }
     groupRepository.save(group);
     return group;

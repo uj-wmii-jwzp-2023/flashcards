@@ -70,7 +70,6 @@ public class FlashcardSetController {
       @CookieValue(name = "sid", required = false) String authToken) {
     logger.info("auth token:" + authToken);
     var user = (authToken != null && !"".equals(authToken)) ? userService.getUserBySessionToken(authToken) : null;
-    logger.info("HERE:");
 
     var sets = setService.findSets();
     // filter out public sets to avoid duplicates in response
@@ -167,7 +166,7 @@ public class FlashcardSetController {
 
   @GetMapping("/{set_id}/cards")
   public ResponseEntity<List<CardResponse>> getCards(@CookieValue(name = "sid", required = false) String authToken,
-      @PathVariable("set_id") String setId, @RequestParam(name = "start_entry", required = false) String startEntry,
+      @PathVariable("set_id") String setId, @RequestParam(name = "start_entry", required = false) String _startEntry,
       @RequestHeader(name = "auth_token", required = false) String authHeader) {
     var user = (authToken != null && !"".equals(authToken)) ? userService.getUserBySessionToken(authToken) : null;
     var flashcardSet = setService.getSet(setId);
@@ -175,11 +174,12 @@ public class FlashcardSetController {
 
     var cards = cardService.getCards(flashcardSet);
 
-    if (user != null && "true".equals(startEntry)) {
+    var startEntry = "true".equals(_startEntry);
+    if (user != null && startEntry) {
       answerService.startEntry(user, flashcardSet);
     }
 
-    var response = cards.stream().map(e -> new CardResponse(e)).collect(Collectors.toList());
+    var response = cards.stream().map(e -> new CardResponse(e, !startEntry)).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
 

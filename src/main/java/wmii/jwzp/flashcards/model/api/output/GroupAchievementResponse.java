@@ -6,9 +6,12 @@ import java.util.stream.Collectors;
 import wmii.jwzp.flashcards.model.db.GroupAchievementModel;
 
 public class GroupAchievementResponse {
-  public List<String> achievements;
+  public List<String> enabledAchievements;
+  public List<String> disabledAchievements;
 
-  public GroupAchievementResponse(List<GroupAchievementModel> groupAchievements) {
-    this.achievements = groupAchievements.stream().map(e -> e.getName()).collect(Collectors.toList());
+  public GroupAchievementResponse(List<GroupAchievementModel> groupAchievements, List<String> allAchievements) {
+    this.enabledAchievements = groupAchievements.stream().map(e -> e.getName()).collect(Collectors.toList());
+    this.disabledAchievements = allAchievements.stream().filter(e -> !this.enabledAchievements.contains(e))
+        .collect(Collectors.toList());
   }
 }

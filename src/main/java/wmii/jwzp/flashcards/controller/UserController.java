@@ -31,7 +31,7 @@ public class UserController {
 
   @PostMapping()
   public ResponseEntity<UserResponse> registerUser(@RequestBody UserCreationInput userInput) {
-    var user = userService.createUser(userInput.getNick(), userInput.getPassword());
+    var user = userService.createUser(userInput);
     var userResponse = new UserResponse(user);
     return ResponseEntity.ok(userResponse);
   }

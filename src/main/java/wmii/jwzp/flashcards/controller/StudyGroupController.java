@@ -159,7 +159,7 @@ public class StudyGroupController {
     userGroupLinkService.verifyUserAction(user, group, AccessLevels.ADMIN);
 
     var updateUser = userService.getUserById(userId);
-    var link = userGroupLinkService.updateAccessLevel(group, updateUser, linkInput.getAccessLevel());
+    var link = userGroupLinkService.updateLink(group, updateUser, linkInput);
 
     var response = new UserGroupLinkResponse(link);
     return ResponseEntity.ok(response);
@@ -167,8 +167,7 @@ public class StudyGroupController {
 
   @DeleteMapping("/{group_id}/users/{user_id}")
   public ResponseEntity<UserGroupLinkResponse> removeUser(@PathVariable("group_id") String groupId,
-      @PathVariable("user_id") String userId, @CookieValue("sid") String authToken,
-      @RequestBody LinkUpdateInput linkInput) {
+      @PathVariable("user_id") String userId, @CookieValue("sid") String authToken) {
     var user = userService.getUserBySessionToken(authToken);
     var group = groupService.getGroupById("group_id");
     userGroupLinkService.verifyUserAction(user, group, AccessLevels.ADMIN);
@@ -199,9 +198,10 @@ public class StudyGroupController {
     var group = groupService.getGroupById(groupId);
     userGroupLinkService.verifyUserAction(user, group, AccessLevels.GUEST);
 
-    var achievements = achievementService.getAchievements(group);
+    var groupAchievements = achievementService.getAchievements(group);
+    var allAchievements = achievementService.getAllAchievements();
 
-    var response = new GroupAchievementResponse(achievements);
+    var response = new GroupAchievementResponse(groupAchievements, allAchievements);
     return ResponseEntity.ok(response);
   }
 
@@ -215,8 +215,10 @@ public class StudyGroupController {
 
     achievementService.enableAchievement(group, achievementName);
 
-    var achievements = achievementService.getAchievements(group);
-    var response = new GroupAchievementResponse(achievements);
+    var groupAchievements = achievementService.getAchievements(group);
+    var allAchievements = achievementService.getAllAchievements();
+
+    var response = new GroupAchievementResponse(groupAchievements, allAchievements);
     return ResponseEntity.ok(response);
   }
 
@@ -230,8 +232,10 @@ public class StudyGroupController {
 
     achievementService.disableAchievement(group, achievementName);
 
-    var achievements = achievementService.getAchievements(group);
-    var response = new GroupAchievementResponse(achievements);
+    var groupAchievements = achievementService.getAchievements(group);
+    var allAchievements = achievementService.getAllAchievements();
+
+    var response = new GroupAchievementResponse(groupAchievements, allAchievements);
     return ResponseEntity.ok(response);
   }
 

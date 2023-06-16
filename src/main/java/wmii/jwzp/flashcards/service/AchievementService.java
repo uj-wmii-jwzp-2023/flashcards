@@ -33,6 +33,10 @@ public class AchievementService {
   @Autowired
   private UserAchievementRepository userAchievementRepository;
 
+  public List<String> getAllAchievements() {
+    return achievementFactory.getAllAchievements();
+  }
+
   public GroupAchievementModel enableAchievement(StudyGroupModel groupModel, String achievementName) {
     if (!achievementFactory.verifyAchievement(achievementName)) {
       throw new BadRequest("Achievement not available.");
@@ -81,16 +85,19 @@ public class AchievementService {
   }
 
   public List<UserAchievementModel> grantAchievements(AnswerEntryModel answerModel) {
+
     var groupId = answerModel.getSet().getGroupId();
     if (groupId == null) {
-      return null;
+      return new ArrayList<UserAchievementModel>();
     }
 
     var availableAchievements = groupAchievementRepository.findAllByGroupId(groupId);
+
     var userAchievements = availableAchievements.stream()
         .filter(e -> achievementFactory.getAchievementClass(e.getName()).isEligible(answerModel))
         .map(e -> achievementFactory.getAchievementClass(e.getName()).create(answerModel.getUserId(), groupId))
         .collect(Collectors.toList());
+
     userAchievements.forEach(e -> userAchievementRepository.save(e));
 
     return userAchievements;

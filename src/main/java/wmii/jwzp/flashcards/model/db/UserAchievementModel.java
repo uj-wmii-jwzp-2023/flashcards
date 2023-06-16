@@ -33,6 +33,10 @@ public class UserAchievementModel {
     return createdAt;
   }
 
+  public void setCreatedAt() {
+    this.createdAt = LocalDateTime.now();
+  }
+
   public void setCreatedAt(LocalDateTime createdAt) {
     this.createdAt = createdAt;
   }

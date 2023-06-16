@@ -12,4 +12,12 @@ public class CardResponse {
     this.question = cardModel.getQuestion();
     this.answer = cardModel.getAnswer();
   }
+
+  public CardResponse(CardModel cardModel, Boolean showAnswers) {
+    this(cardModel);
+    if (!showAnswers) {
+      this.answer = null;
+    }
+  }
+
 }
