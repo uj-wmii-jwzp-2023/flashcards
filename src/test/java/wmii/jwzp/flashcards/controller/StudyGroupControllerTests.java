@@ -40,7 +40,7 @@ class StudyGroupControllerTests {
 
   @MockBean
   private StudyGroupRepository studyGroupRepository;
-  
+
   @MockBean
   private AchievementService achievementService;
   @MockBean
@@ -54,7 +54,7 @@ class StudyGroupControllerTests {
 
   @Autowired
   private MockMvc api;
-  
+
   @Test
   void getGroups_test() throws Exception {
     SessionModel sessionModel = new SessionModel();
@@ -71,10 +71,10 @@ class StudyGroupControllerTests {
     Mockito.when(userRepository.findById(anyString())).thenReturn(Optional.of(userModel));
 
     api.perform(get("/study_groups")
-      .cookie(new Cookie("sid","123")))
-      .andExpect(status().isOk());
+        .cookie(new Cookie("sid", "123")))
+        .andExpect(status().isOk());
   }
-  
+
   @Test
   void createGroup_test() throws Exception {
     SessionModel sessionModel = new SessionModel();
@@ -90,9 +90,9 @@ class StudyGroupControllerTests {
     Mockito.when(userRepository.findById(anyString())).thenReturn(Optional.of(userModel));
     Mockito.when(userGroupLinkRepository.save(any())).thenReturn(null);
     StudyGroupInput sgi = new StudyGroupInput();
-    sgi.setName("name");
+    sgi.name = "name";
 
-    assertTrue(studyGroupController.createGroup(sgi,"sid=token").getStatusCode().is2xxSuccessful());
+    assertTrue(studyGroupController.createGroup(sgi, "sid=token").getStatusCode().is2xxSuccessful());
   }
 
   @Test
@@ -106,7 +106,7 @@ class StudyGroupControllerTests {
     userModel.setCreatedAt();
     userModel.setId("id");
     userModel.setNick("nick");
-    
+
     UserGroupLinkModel userGroupLinkModel = new UserGroupLinkModel();
     StudyGroupModel studyGroupModel = new StudyGroupModel();
 
@@ -116,10 +116,11 @@ class StudyGroupControllerTests {
     Mockito.when(userGroupLinkRepository.save(any())).thenReturn(null);
     Mockito.when(userGroupLinkRepository.findById(any())).thenReturn(Optional.of(userGroupLinkModel));
     StudyGroupInput sgi = new StudyGroupInput();
-    sgi.setName("name");
+    sgi.name = "name";
 
-    assertTrue(studyGroupController.getGroup("id","token").getStatusCode().is2xxSuccessful());
+    assertTrue(studyGroupController.getGroup("id", "token").getStatusCode().is2xxSuccessful());
   }
+
   @Test
   void updateGroup_test() throws Exception {
     SessionModel sessionModel = new SessionModel();
@@ -131,7 +132,7 @@ class StudyGroupControllerTests {
     userModel.setCreatedAt();
     userModel.setId("id");
     userModel.setNick("nick");
-    
+
     UserGroupLinkModel userGroupLinkModel = new UserGroupLinkModel();
     userGroupLinkModel.setAccessLevel(420);
     StudyGroupModel studyGroupModel = new StudyGroupModel();
@@ -142,10 +143,11 @@ class StudyGroupControllerTests {
     Mockito.when(userGroupLinkRepository.save(any())).thenReturn(null);
     Mockito.when(userGroupLinkRepository.findById(any())).thenReturn(Optional.of(userGroupLinkModel));
     StudyGroupInput sgi = new StudyGroupInput();
-    sgi.setName("name");
+    sgi.name = "name";
 
-    assertTrue(studyGroupController.deleteGroup("id","token").getStatusCode().is2xxSuccessful());
+    assertTrue(studyGroupController.deleteGroup("id", "token").getStatusCode().is2xxSuccessful());
   }
+
   @Test
   void joinGroup_test() throws Exception {
     SessionModel sessionModel = new SessionModel();
@@ -157,7 +159,7 @@ class StudyGroupControllerTests {
     userModel.setCreatedAt();
     userModel.setId("id");
     userModel.setNick("nick");
-    
+
     UserGroupLinkModel userGroupLinkModel = new UserGroupLinkModel();
     userGroupLinkModel.setAccessLevel(420);
     StudyGroupModel studyGroupModel = new StudyGroupModel();
@@ -168,10 +170,11 @@ class StudyGroupControllerTests {
     Mockito.when(userGroupLinkRepository.save(any())).thenReturn(null);
     Mockito.when(userGroupLinkRepository.findById(any())).thenReturn(Optional.of(userGroupLinkModel));
     StudyGroupInput sgi = new StudyGroupInput();
-    sgi.setName("name");
+    sgi.name = "name";
 
-    assertTrue(studyGroupController.joinGroup("id","token").getStatusCode().is2xxSuccessful());
+    assertTrue(studyGroupController.joinGroup("id", "token").getStatusCode().is2xxSuccessful());
   }
+
   @Test
   void getUsersInGroup_test() throws Exception {
     SessionModel sessionModel = new SessionModel();
@@ -183,7 +186,7 @@ class StudyGroupControllerTests {
     userModel.setCreatedAt();
     userModel.setId("id");
     userModel.setNick("nick");
-    
+
     UserGroupLinkModel userGroupLinkModel = new UserGroupLinkModel();
     userGroupLinkModel.setAccessLevel(420);
     StudyGroupModel studyGroupModel = new StudyGroupModel();
@@ -194,10 +197,11 @@ class StudyGroupControllerTests {
     Mockito.when(userGroupLinkRepository.save(any())).thenReturn(null);
     Mockito.when(userGroupLinkRepository.findById(any())).thenReturn(Optional.of(userGroupLinkModel));
     StudyGroupInput sgi = new StudyGroupInput();
-    sgi.setName("name");
+    sgi.name = "name";
 
-    assertTrue(studyGroupController.getUsersInGroup("id","token").getStatusCode().is2xxSuccessful());
+    assertTrue(studyGroupController.getUsersInGroup("id", "token").getStatusCode().is2xxSuccessful());
   }
+
   @Test
   void editUserRoleGroup_test() throws Exception {
     SessionModel sessionModel = new SessionModel();
@@ -209,7 +213,7 @@ class StudyGroupControllerTests {
     userModel.setCreatedAt();
     userModel.setId("id");
     userModel.setNick("nick");
-    
+
     UserGroupLinkModel userGroupLinkModel = new UserGroupLinkModel();
     userGroupLinkModel.setAccessLevel(420);
     StudyGroupModel studyGroupModel = new StudyGroupModel();
@@ -220,10 +224,15 @@ class StudyGroupControllerTests {
     Mockito.when(userGroupLinkRepository.save(any())).thenReturn(null);
     Mockito.when(userGroupLinkRepository.findById(any())).thenReturn(Optional.of(userGroupLinkModel));
     StudyGroupInput sgi = new StudyGroupInput();
-    sgi.setName("name");
+    sgi.name = "name";
 
-    assertTrue(studyGroupController.editUserRole("d","ok","token",new LinkUpdateInput()).getStatusCode().is2xxSuccessful());
+    LinkUpdateInput input = new LinkUpdateInput();
+    input.access_level = 2;
+
+    assertTrue(
+        studyGroupController.editUserRole("d", "ok", "token", input).getStatusCode().is2xxSuccessful());
   }
+
   @Test
   void disableAchievement_test() throws Exception {
     SessionModel sessionModel = new SessionModel();
@@ -235,7 +244,7 @@ class StudyGroupControllerTests {
     userModel.setCreatedAt();
     userModel.setId("id");
     userModel.setNick("nick");
-    
+
     UserGroupLinkModel userGroupLinkModel = new UserGroupLinkModel();
     userGroupLinkModel.setAccessLevel(420);
     StudyGroupModel studyGroupModel = new StudyGroupModel();
@@ -246,8 +255,8 @@ class StudyGroupControllerTests {
     Mockito.when(userGroupLinkRepository.save(any())).thenReturn(null);
     Mockito.when(userGroupLinkRepository.findById(any())).thenReturn(Optional.of(userGroupLinkModel));
     StudyGroupInput sgi = new StudyGroupInput();
-    sgi.setName("name");
+    sgi.name = "name";
 
-    assertTrue(studyGroupController.disableAchievement("d","ok","achievement").getStatusCode().is2xxSuccessful());
+    assertTrue(studyGroupController.disableAchievement("d", "ok", "achievement").getStatusCode().is2xxSuccessful());
   }
 }

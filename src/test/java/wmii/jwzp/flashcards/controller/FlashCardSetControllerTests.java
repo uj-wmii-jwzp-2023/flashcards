@@ -1,18 +1,11 @@
 package wmii.jwzp.flashcards.controller;
 
-import wmii.jwzp.flashcards.model.api.input.LinkUpdateInput;
-import wmii.jwzp.flashcards.model.api.input.StudyGroupInput;
 import wmii.jwzp.flashcards.model.db.CardModel;
 import wmii.jwzp.flashcards.model.db.FlashcardSetModel;
-import wmii.jwzp.flashcards.model.db.SessionModel;
-import wmii.jwzp.flashcards.model.db.StudyGroupModel;
-import wmii.jwzp.flashcards.model.db.UserGroupLinkModel;
-import wmii.jwzp.flashcards.model.db.UserModel;
 import wmii.jwzp.flashcards.repository.SessionRepository;
 import wmii.jwzp.flashcards.repository.StudyGroupRepository;
 import wmii.jwzp.flashcards.repository.UserGroupLinkRepository;
 import wmii.jwzp.flashcards.repository.UserRepository;
-import wmii.jwzp.flashcards.service.AchievementService;
 import wmii.jwzp.flashcards.service.CardService;
 import wmii.jwzp.flashcards.service.FlashcardSetService;
 import wmii.jwzp.flashcards.service.UserService;
@@ -27,28 +20,24 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import jakarta.servlet.http.Cookie;
-import net.bytebuddy.asm.Advice.Return;
 
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
-class FlashCardSetControllerTests{
+class FlashCardSetControllerTests {
 
   @Autowired
   FlashcardSetController studyGroupController;
 
   @MockBean
   private StudyGroupRepository studyGroupRepository;
-  
+
   @MockBean
   private UserService userService;
-  
+
   @MockBean
   private FlashcardSetService setService;
 
@@ -66,82 +55,85 @@ class FlashCardSetControllerTests{
 
   @Autowired
   private MockMvc api;
-  
+
   @Test
   void getSets_test() throws Exception {
     api.perform(get("/flashcard_sets"))
-      .andExpect(status().isOk());
+        .andExpect(status().isOk());
   }
 
   @Test
   void createSet_test() throws Exception {
-  var a = new FlashcardSetModel();
-  a.setCreatedAt();
-  a.setGroupId("nul");
-  a.setId("null");
-  a.setIsPublic(true);
-  a.setName("null");
-  a.setUserId("null");
-  Mockito.when(setService.getSet(any())).thenReturn(a);
-  Mockito.when(setService.createSet(any(),any())).thenReturn(a);
+    var a = new FlashcardSetModel();
+    a.setCreatedAt();
+    a.setGroupId("nul");
+    a.setId("null");
+    a.setIsPublic(true);
+    a.setName("null");
+    a.setUserId("null");
+    Mockito.when(setService.getSet(any())).thenReturn(a);
+    Mockito.when(setService.createSet(any(), any())).thenReturn(a);
     api.perform(post("/flashcard_sets")
-      .contentType("application/json")
-      .cookie(new Cookie("sid","123"))
-      .content("{\"nick\": \"ok2\",\"password\": \"ok\"}"))
-      .andExpect(status().isOk());
+        .contentType("application/json")
+        .cookie(new Cookie("sid", "123"))
+        .content("{\"nick\": \"ok2\",\"password\": \"ok\"}"))
+        .andExpect(status().isOk());
   }
+
   @Test
   void updateSet_test() throws Exception {
-  var a = new FlashcardSetModel();
-  a.setCreatedAt();
-  a.setGroupId("nul");
-  a.setId("null");
-  a.setIsPublic(true);
-  a.setName("null");
-  a.setUserId("null");
-  Mockito.when(setService.getSet(any())).thenReturn(a);
-  Mockito.when(setService.updateSet(any(),any())).thenReturn(a);
+    var a = new FlashcardSetModel();
+    a.setCreatedAt();
+    a.setGroupId("nul");
+    a.setId("null");
+    a.setIsPublic(true);
+    a.setName("null");
+    a.setUserId("null");
+    Mockito.when(setService.getSet(any())).thenReturn(a);
+    Mockito.when(setService.updateSet(any(), any())).thenReturn(a);
     api.perform(patch("/flashcard_sets/id")
-      .contentType("application/json")
-      .cookie(new Cookie("sid","123"))
-      .content("{\"nick\": \"ok2\",\"password\": \"ok\"}"))
-      .andExpect(status().isOk());
+        .contentType("application/json")
+        .cookie(new Cookie("sid", "123"))
+        .content("{\"nick\": \"ok2\",\"password\": \"ok\"}"))
+        .andExpect(status().isOk());
   }
+
   @Test
   void deleteSet_test() throws Exception {
-  var a = new FlashcardSetModel();
-  a.setCreatedAt();
-  a.setGroupId("nul");
-  a.setId("null");
-  a.setIsPublic(true);
-  a.setName("null");
-  a.setUserId("null");
-  Mockito.when(setService.getSet(any())).thenReturn(a);
-  Mockito.when(setService.removeSet(any())).thenReturn(a);
+    var a = new FlashcardSetModel();
+    a.setCreatedAt();
+    a.setGroupId("nul");
+    a.setId("null");
+    a.setIsPublic(true);
+    a.setName("null");
+    a.setUserId("null");
+    Mockito.when(setService.getSet(any())).thenReturn(a);
+    Mockito.when(setService.removeSet(any())).thenReturn(a);
     api.perform(delete("/flashcard_sets/id")
-      .contentType("application/json")
-      .cookie(new Cookie("sid","123"))
-      .content("{\"nick\": \"ok2\",\"password\": \"ok\"}"))
-      .andExpect(status().isOk());
+        .contentType("application/json")
+        .cookie(new Cookie("sid", "123"))
+        .content("{\"nick\": \"ok2\",\"password\": \"ok\"}"))
+        .andExpect(status().isOk());
   }
+
   @Test
   void updatecard_test() throws Exception {
-  var a = new FlashcardSetModel();
-  a.setCreatedAt();
-  a.setGroupId("nul");
-  a.setId("null");
-  a.setIsPublic(true);
-  a.setName("null");
-  a.setUserId("null");
-  CardModel cm = new CardModel();
-  Mockito.when(setService.getSet(any())).thenReturn(a);
-  Mockito.when(setService.removeSet(any())).thenReturn(a);
-  Mockito.when(cardService.updateCard(any(),any())).thenReturn(cm);
-  Mockito.when(cardService.getCardById(any())).thenReturn(cm);
+    var a = new FlashcardSetModel();
+    a.setCreatedAt();
+    a.setGroupId("nul");
+    a.setId("null");
+    a.setIsPublic(true);
+    a.setName("null");
+    a.setUserId("null");
+    CardModel cm = new CardModel();
+    Mockito.when(setService.getSet(any())).thenReturn(a);
+    Mockito.when(setService.removeSet(any())).thenReturn(a);
+    Mockito.when(cardService.updateCard(any(), any())).thenReturn(cm);
+    Mockito.when(cardService.getCardById(any())).thenReturn(cm);
     api.perform(delete("/flashcard_sets/id")
-      .contentType("application/json")
-      .cookie(new Cookie("sid","123"))
-      .content("{\"nick\": \"ok2\",\"password\": \"ok\"}"))
-      .andExpect(status().isOk());
+        .contentType("application/json")
+        .cookie(new Cookie("sid", "123"))
+        .content("{\"nick\": \"ok2\",\"password\": \"ok\"}"))
+        .andExpect(status().isOk());
   }
 }
