@@ -1,5 +1,6 @@
 package wmii.jwzp.flashcards.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ import wmii.jwzp.flashcards.model.api.input.SetUpdateInput;
 import wmii.jwzp.flashcards.model.api.output.CardResponse;
 import wmii.jwzp.flashcards.model.api.output.FlashcardSetResponse;
 import wmii.jwzp.flashcards.model.api.output.UserAchievementResponse;
+import wmii.jwzp.flashcards.model.db.FlashcardSetModel;
 import wmii.jwzp.flashcards.service.AchievementService;
 import wmii.jwzp.flashcards.service.AnswerEntryService;
 import wmii.jwzp.flashcards.service.CardService;
@@ -62,17 +64,14 @@ public class FlashcardSetController {
   private AchievementService achievementsService;
 
   @GetMapping()
-  public ResponseEntity<List<FlashcardSetResponse>> getSets() {
+  public ResponseEntity<List<FlashcardSetResponse>> getSets(
+      @CookieValue(name = "sid", required = false) String authToken) {
+    var user = authToken != null ? userService.getUserBySessionToken(authToken) : null;
     var sets = setService.findSets();
-    var response = sets.stream().map(e -> new FlashcardSetResponse(e)).collect(Collectors.toList());
-    return ResponseEntity.ok(response);
-  }
-
-  @GetMapping()
-  public ResponseEntity<List<FlashcardSetResponse>> getSets(@CookieValue("sid") String authToken) {
-    var user = userService.getUserBySessionToken(authToken);
-    var sets = setService.findSets();
-    var userSets = setService.findSets(user);
+    // filter out public sets to avoid duplicates in response
+    var userSets = user != null
+        ? setService.findSets(user).stream().filter(e -> !e.isPublic()).collect(Collectors.toList())
+        : new ArrayList<FlashcardSetModel>();
     sets.addAll(userSets);
     var response = sets.stream().map(e -> new FlashcardSetResponse(e)).collect(Collectors.toList());
     return ResponseEntity.ok(response);

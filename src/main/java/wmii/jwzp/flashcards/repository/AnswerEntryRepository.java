@@ -20,10 +20,6 @@ public interface AnswerEntryRepository extends JpaRepository<AnswerEntryModel, S
   public Optional<AnswerEntryModel> findExistingForUserBySet(@Param("userid") String userId,
       @Param("setid") String setId);
 
-  @Query(value = "select a.* from answers a join sets s on a.set_id = s.id where a.user_id = :userid and s.group_id = :groupid", nativeQuery = true)
-  public Optional<AnswerEntryModel> findExistingForUserByGroup(@Param("userid") String userId,
-      @Param("groupid") String groupId);
-
   @Query(value = "select a.* from answers a where a.user_id = :userid", nativeQuery = true)
   public List<AnswerEntryModel> findAllForUser(@Param("userid") String userId);
 
