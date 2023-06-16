@@ -67,4 +67,9 @@ public class AnswerEntryService {
     return this.endEntry(user, flashcardSet);
   }
 
+  public List<AnswerEntryModel> getAnswers(UserModel user, FlashcardSetModel flashcardSet) {
+    var answers = answerRepository.findAllForUserBySet(user.getId(), flashcardSet.getId());
+    return answers;
+  }
+
 }

@@ -24,6 +24,7 @@ import wmii.jwzp.flashcards.model.api.input.AnswerInput;
 import wmii.jwzp.flashcards.model.api.input.CardInput;
 import wmii.jwzp.flashcards.model.api.input.SetCreationInput;
 import wmii.jwzp.flashcards.model.api.input.SetUpdateInput;
+import wmii.jwzp.flashcards.model.api.output.AnswerResponse;
 import wmii.jwzp.flashcards.model.api.output.CardResponse;
 import wmii.jwzp.flashcards.model.api.output.FlashcardSetResponse;
 import wmii.jwzp.flashcards.model.api.output.UserAchievementResponse;
@@ -221,6 +222,19 @@ public class FlashcardSetController {
     card = cardService.removeCard(card);
 
     var response = new CardResponse(card);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/{set_id}/answers")
+  public ResponseEntity<List<AnswerResponse>> getAnswers(@CookieValue("sid") String authToken,
+      @PathVariable("set_id") String setId) {
+    var user = userService.getUserBySessionToken(authToken);
+    var flashcardSet = setService.getSet(setId);
+    setService.verifyUserAction(user, flashcardSet, AccessLevels.GUEST);
+
+    var answers = answerService.getAnswers(user, flashcardSet);
+
+    var response = answers.stream().map(e -> new AnswerResponse(e)).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
 
