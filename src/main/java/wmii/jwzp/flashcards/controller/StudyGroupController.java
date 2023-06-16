@@ -141,7 +141,8 @@ public class StudyGroupController {
   public ResponseEntity<List<UserAchievementResponse>> getUserAchievements(@PathVariable("group_id") String groupId,
       @PathVariable("user_id") String userId, @CookieValue("sid") String authToken) {
     var user = userService.getUserBySessionToken(authToken);
-    var group = groupService.getGroupById("group_id");
+    var group = groupService.getGroupById(groupId);
+
     userGroupLinkService.verifyUserAction(user, group, AccessLevels.GUEST);
 
     var achievements = achievementService.getAchievements(user);
@@ -155,7 +156,7 @@ public class StudyGroupController {
       @PathVariable("user_id") String userId, @CookieValue("sid") String authToken,
       @RequestBody LinkUpdateInput linkInput) {
     var user = userService.getUserBySessionToken(authToken);
-    var group = groupService.getGroupById("group_id");
+    var group = groupService.getGroupById(groupId);
     userGroupLinkService.verifyUserAction(user, group, AccessLevels.ADMIN);
 
     var updateUser = userService.getUserById(userId);
@@ -169,7 +170,7 @@ public class StudyGroupController {
   public ResponseEntity<UserGroupLinkResponse> removeUser(@PathVariable("group_id") String groupId,
       @PathVariable("user_id") String userId, @CookieValue("sid") String authToken) {
     var user = userService.getUserBySessionToken(authToken);
-    var group = groupService.getGroupById("group_id");
+    var group = groupService.getGroupById(groupId);
     userGroupLinkService.verifyUserAction(user, group, AccessLevels.ADMIN);
 
     var link = userGroupLinkService.leaveGroup(group, user);
